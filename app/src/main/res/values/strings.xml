@@ -5,7 +5,8 @@
     <string name="login_google">Log in with Google</string>
     <string name="login_facebook">Log in with Facebook</string>
 
-    <string name="app_name">Musicians</string>
+    <string name="app_name">Musyzian</string>
+    <string name="app_description">Find musicians near you</string>
 
     <!-- LOGIJN ACTIVITY EMAIL !-->
     <string name="email_exp">Introduce Email and Password to log-in or create a new account</string>
@@ -19,5 +20,19 @@
     <string name="password_error_empty">The password can\'t be empty</string>
     <string name="password_error_length">The password must have at least 6 characters</string>
     <string name="error_singin">Incorrect email or password</string>
+
+    <!--register email activity !-->
+    <string name="title_register">Introduce email and password to create your new account</string>
+    <string name="return_login">Return to the log-in screen</string>
+    <string name="register">Register</string>
+
+    <string name="user_registered">User registered correctly</string>
+    <string name="user_not_registered">User not registered</string>
+
+    <!-- email verification activity !-->
+    <string name="verification_text">A mail has been sent to your email address. Open it and
+    click on the link to verify this account.</string>
+    <string name="send_email_again">Send email again</string>
+
 
 </resources>
