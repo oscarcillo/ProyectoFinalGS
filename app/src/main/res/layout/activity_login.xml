@@ -26,17 +26,24 @@
         android:textSize="35sp"
         android:textStyle="bold|italic" />
 
+    <RelativeLayout
+        android:layout_width="391dp"
+        android:layout_height="97dp">
+
+    </RelativeLayout>
+
     <Button
         android:id="@+id/emailLoginButton"
-        android:layout_width="220dp"
+        android:layout_width="225dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@android:drawable/sym_action_email"
+        android:onClick="goToLoginEmailActivity"
         android:text="@string/login_email" />
 
     <Button
         android:id="@+id/googleLoginButton"
-        android:layout_width="220dp"
+        android:layout_width="225dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@drawable/google_icon"
@@ -44,7 +51,7 @@
 
     <Button
         android:id="@+id/facebookLoginButton"
-        android:layout_width="220dp"
+        android:layout_width="225dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@drawable/facebook_icon"

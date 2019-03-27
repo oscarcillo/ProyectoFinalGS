@@ -7,4 +7,17 @@
 
     <string name="app_name">Musicians</string>
 
+    <!-- LOGIJN ACTIVITY EMAIL !-->
+    <string name="email_exp">Introduce Email and Password to log-in or create a new account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="Sing_in">Sign in</string>
+    <string name="register_text">Click here to create a new account</string>
+
+    <string name="email_error_empty">The email can\'t be empty</string>
+    <string name="email_error_form">Not a valid email</string>
+    <string name="password_error_empty">The password can\'t be empty</string>
+    <string name="password_error_length">The password must have at least 6 characters</string>
+    <string name="error_singin">Incorrect email or password</string>
+
 </resources>
