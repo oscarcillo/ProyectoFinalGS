@@ -45,8 +45,15 @@
     <string name="birthday">Birthday</string>
     <string name="continue_">Continue</string>
 
+    <string name="incomplete_data">You have to fill all the data</string>
+
     <!-- menu    !-->
     <string name="logout">Log-out</string>
+    <string name="title_activity_musical_set_up">MusicalSetUpActivity</string>
+
+    <!-- musical setup !-->
+    <string name="musical_setup_title">Something more</string>
+    <string name="musical_setup_description">Introduce data about your musical preferences</string>
 
 
 </resources>
