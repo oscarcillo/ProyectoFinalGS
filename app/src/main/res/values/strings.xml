@@ -53,7 +53,7 @@
 
     <!-- musical setup !-->
     <string name="musical_setup_title">Something more</string>
-    <string name="musical_setup_description">Introduce data about your musical preferences</string>
+    <string name="musical_setup_description">What instruments do you play?</string>
 
 
 </resources>

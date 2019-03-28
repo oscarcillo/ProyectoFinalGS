@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,6 +28,8 @@ public class LoginActivity extends AppCompatActivity {
 
     GoogleSignInClient mGoogleSignInClient;
 
+    ProgressBar progressBarLogin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser()!=null)
             goToSetUpActivity();
         //
+        progressBarLogin = findViewById(R.id.progressBarLogin);
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -74,16 +78,18 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
+                //progressBarLogin.setVisibility(View.INVISIBLE);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("sdfgsdfg", "Google sign in failed", e);
+                progressBarLogin.setVisibility(View.INVISIBLE);
                 // ...
             }
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d("sdfg", "firebaseAuthWithGoogle:" + acct.getId());
+        progressBarLogin.setVisibility(View.VISIBLE);
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -98,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("asdf", "signInWithCredential:failure", task.getException());
+                            progressBarLogin.setVisibility(View.INVISIBLE);
                         }
                     }
                 });

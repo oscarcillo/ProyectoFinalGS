@@ -35,9 +35,17 @@
         android:textSize="20sp"
         android:textStyle="italic" />
 
+    <ProgressBar
+        android:id="@+id/progressBarLogin"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="invisible" />
+
     <RelativeLayout
         android:layout_width="391dp"
-        android:layout_height="97dp">
+        android:layout_height="20dp">
 
     </RelativeLayout>
 

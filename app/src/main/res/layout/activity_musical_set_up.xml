@@ -31,50 +31,16 @@
         android:id="@+id/textView3"
         android:layout_width="277dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/musical_setup_description"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_light_pressed"
         android:textSize="18sp" />
 
-    <EditText
-        android:id="@+id/nameText"
-        android:layout_width="275dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:backgroundTint="@color/common_google_signin_btn_text_light_default"
-        android:ems="10"
-        android:hint="@string/name"
-        android:inputType="textPersonName" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/birthdayText"
-            android:layout_width="232dp"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/common_google_signin_btn_text_light_default"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:editable="false"
-            android:ems="10"
-            android:enabled="false"
-            android:hint="@string/birthday"
-            android:inputType="textPersonName"
-            android:textIsSelectable="false" />
-
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="43dp"
-            android:layout_height="45dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/buttonColor"
-            android:onClick="showDatePickerDialog"
-            app:srcCompat="@android:drawable/ic_menu_my_calendar" />
-    </LinearLayout>
+    <ListView
+        android:id="@+id/listInstruments"
+        android:layout_width="337dp"
+        android:layout_height="263dp" />
 
     <Button
         android:id="@+id/registerButton"
