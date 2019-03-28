@@ -40,7 +40,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
             public void run() {
                 if(!isActivated)
                     checkEmailVerification();
-                handler.postDelayed(this, 2500);
+                handler.postDelayed(this, 1800);
             }
         }, 1000);  //the time is in miliseconds
     }
@@ -48,8 +48,9 @@ public class EmailVerificationActivity extends AppCompatActivity {
     public void checkEmailVerification(){
         mAuth.signInWithEmailAndPassword(email, password);
         if(user.isEmailVerified()) {
-            goToMainActivity();
+            goToSetUpActivity();
             isActivated = true;
+            Toast.makeText(this, getResources().getText(R.string.email_verified), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -63,8 +64,8 @@ public class EmailVerificationActivity extends AppCompatActivity {
         finish();
     }
 
-    public void goToMainActivity(){
-        Intent i = new Intent(this, MainActivity.class);
+    public void goToSetUpActivity(){
+        Intent i = new Intent(this, SetUpActivity.class);
         startActivity(i);
         this.finish();
     }

@@ -27,12 +27,26 @@
     <string name="register">Register</string>
 
     <string name="user_registered">User registered correctly</string>
-    <string name="user_not_registered">User not registered</string>
+    <string name="user_not_registered">The account couldn\'t be created</string>
 
     <!-- email verification activity !-->
     <string name="verification_text">A mail has been sent to your email address. Open it and
     click on the link to verify this account.</string>
     <string name="send_email_again">Send email again</string>
+    <string name="email_verified">Email verified</string>
+
+    <!-- setup activity !-->
+    <string name="set_up_tiutle">Let\'s start</string>
+    <string name="set_up_description">Introduce your personal data</string>
+
+    <string name="click_change_image">Click over the image to choose one</string>
+
+    <string name="name">Name</string>
+    <string name="birthday">Birthday</string>
+    <string name="continue_">Continue</string>
+
+    <!-- menu    !-->
+    <string name="logout">Log-out</string>
 
 
 </resources>

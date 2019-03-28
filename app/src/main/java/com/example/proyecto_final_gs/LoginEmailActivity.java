@@ -28,6 +28,8 @@ public class LoginEmailActivity extends AppCompatActivity {
     TextView emailText, passwordText;
     ProgressBar progreso;
 
+    String email, password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +44,8 @@ public class LoginEmailActivity extends AppCompatActivity {
     }
 
     public void createUserOrLogin(View v){
-        String email = emailText.getText().toString().trim();
-        String password = passwordText.getText().toString().trim();
+        email = emailText.getText().toString().trim();
+        password = passwordText.getText().toString().trim();
         //validacion de los edittext
         if(email.isEmpty()){
             emailText.setError(getResources().getString(R.string.email_error_empty));
@@ -74,6 +76,12 @@ public class LoginEmailActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // Sign in success, update UI with the signed-in user's information
                     user = mAuth.getCurrentUser();
+                    //comprobar si el mail está verificado
+                    if(user.isEmailVerified())
+                        goToSetUpActivity();
+                    else
+                        goToEmailVerificationActivity();
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(LoginEmailActivity.this,
@@ -88,5 +96,19 @@ public class LoginEmailActivity extends AppCompatActivity {
     public void goToRegisterActivity(View v){
             Intent i = new Intent(this, RegisterActivity.class);
             startActivity(i);
+    }
+
+    public void goToSetUpActivity(){
+        Intent i = new Intent(this, SetUpActivity.class);
+        startActivity(i);
+        this.finish();
+    }
+
+    public void goToEmailVerificationActivity(){
+        Intent i = new Intent(this, EmailVerificationActivity.class);
+        i.putExtra("email", email);
+        i.putExtra("password", password);
+        startActivity(i);
+        finish();
     }
 }

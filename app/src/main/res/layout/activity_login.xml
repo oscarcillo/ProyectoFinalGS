@@ -31,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_description"
+        android:textColor="@color/common_google_signin_btn_text_light_default"
         android:textSize="20sp"
         android:textStyle="italic" />
 
@@ -56,6 +57,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@drawable/google_icon"
+        android:onClick="signIn"
         android:text="@string/login_google" />
 
     <Button

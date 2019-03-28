@@ -38,15 +38,26 @@
 
     <RelativeLayout
         android:layout_width="391dp"
-        android:layout_height="50dp">
+        android:layout_height="20dp">
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="SIGN-UP"
+        android:textAllCaps="false"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="277dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/title_register"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_light_pressed"
@@ -57,7 +68,7 @@
         android:id="@+id/emailRegisterText"
         android:layout_width="275dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:ems="10"
         android:hint="@string/email"
         android:inputType="textPersonName" />
@@ -74,7 +85,7 @@
         android:id="@+id/registerButton"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/buttonColor"
         android:onClick="signUpNewUser"
         android:text="@string/register" />
@@ -83,7 +94,7 @@
         android:id="@+id/textRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:onClick="goToLoginEmailActivity"
         android:text="@string/return_login"
         android:textColor="@color/colorAccent"
@@ -94,7 +105,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="15dp"
         android:layout_marginBottom="0dp"
         android:progressTint="@color/colorPrimary"
         android:visibility="invisible" />
