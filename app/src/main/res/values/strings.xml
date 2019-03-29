@@ -55,5 +55,9 @@
     <string name="musical_setup_title">Tell us something more</string>
     <string name="musical_setup_description">What instruments do you play?</string>
 
+    <!-- artist setup !-->
+    <string name="artist_setup_title">Now choose your favourite artists</string>
+    <string name="artist_setup_description">Search for them and select as many as you want</string>
+
 
 </resources>

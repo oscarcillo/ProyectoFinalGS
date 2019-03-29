@@ -48,6 +48,9 @@ public class MusicalSetUpActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //
+        checkData();
+        //inckuir datos sobre instrumentos en la lista desde Firebase
         final List<String> instrumentsList = new ArrayList<>();
         refInstruments.addValueEventListener(new ValueEventListener() {
             @Override
@@ -89,6 +92,18 @@ public class MusicalSetUpActivity extends AppCompatActivity {
     ///////////////////////////////////////////
     //////////////////////////////////////////
 
+    public void checkData(){
+        refUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                    goToArtistsSetUpActivity();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
     public void uploadChoosenInstrumentsFirebase(View v){
         choosenInstruments = adapter.getChooseInstruments();
         //borrar primero los datos anteriores
@@ -96,5 +111,12 @@ public class MusicalSetUpActivity extends AppCompatActivity {
         //Insertar los nuevos valores
         for(int i = 0;i<choosenInstruments.size();i++)
             refUsers.child(""+i).setValue(choosenInstruments.get(i));
+        //ir a la siguiente actividad
+        goToArtistsSetUpActivity();
+    }
+
+    public void goToArtistsSetUpActivity(){
+        Intent i = new Intent(this, ArtistsSetUpActivity.class);
+        startActivity(i);
     }
 }
