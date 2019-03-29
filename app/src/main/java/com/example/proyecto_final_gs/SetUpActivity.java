@@ -2,20 +2,30 @@ package com.example.proyecto_final_gs;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -24,6 +34,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.IOException;
 
 public class SetUpActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -32,16 +47,19 @@ public class SetUpActivity extends AppCompatActivity implements DatePickerDialog
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser user = mAuth.getCurrentUser();
     FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference ref = db.getReference(user.getUid());
+    DatabaseReference ref = db.getReference("users").child(user.getUid());
 
     //views
     EditText nameText;
     EditText birthdayText;
     ImageView profileImageView;
+    Button continueButton;
+    ProgressBar imageProgressBar;
+
     Uri photoUrl = null;
 
     //
-    String name, birthday, photoUrlString;
+    String name, birthday, photoUrlString, url;
 
     boolean skipActivity = true;
 
@@ -53,6 +71,8 @@ public class SetUpActivity extends AppCompatActivity implements DatePickerDialog
         birthdayText = findViewById(R.id.birthdayText);
         nameText = findViewById(R.id.nameText);
         profileImageView = findViewById(R.id.profileImageView);
+        continueButton = findViewById(R.id.continueButton);
+        imageProgressBar = findViewById(R.id.imageProgressBar);
         //comprobar si los datos ya estan introducidos para saltar a otra actividad
         checkData();
         //
@@ -140,5 +160,86 @@ public class SetUpActivity extends AppCompatActivity implements DatePickerDialog
            @Override
            public void onCancelled(@NonNull DatabaseError databaseError) { }
        });
+    }
+
+    ////////////////////////////////////
+    //metodo que se activa al hacer click sobre la imagen
+    public void showImageChooser(View v){
+        Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(i, "Elige una imagen"), 101);
+    }
+
+    /**
+     * Mostrar la imagen seleccionada en la actividad
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Comprobar que la imagen se ha seleccionado correctamente
+        if(requestCode == 101 && resultCode == RESULT_OK && data != null
+                && data.getData()!=null){
+            //almacenar la imagen en una variable
+            photoUrl = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),
+                        photoUrl);
+                profileImageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //subir la imagen
+        uploadImageToFirebaseStorage();
+    }
+
+    /**
+     * Método que sube imagenes de usuario al Storage de Firebase
+     */
+    public void uploadImageToFirebaseStorage(){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        url = "profilepics/"+System.currentTimeMillis() + ".jpg";
+        final StorageReference riversRef = storageRef.child(url);
+        UploadTask uploadTask = riversRef.putFile(photoUrl);
+
+        continueButton.setEnabled(false);
+        imageProgressBar.setVisibility(View.VISIBLE);
+        profileImageView.setAlpha(0.3f);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("1", exception.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("1", "La imagen se ha subido a Firebase");
+            }
+        });
+        //
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return riversRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    photoUrl = Uri.parse(task.getResult().toString());
+                    Log.e("URL:", ""+photoUrl);
+                    continueButton.setEnabled(true);
+                    imageProgressBar.setVisibility(View.INVISIBLE);
+                    profileImageView.setAlpha(1f);
+                }
+            }
+        });
     }
 }

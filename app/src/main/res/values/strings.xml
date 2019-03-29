@@ -52,7 +52,7 @@
     <string name="title_activity_musical_set_up">MusicalSetUpActivity</string>
 
     <!-- musical setup !-->
-    <string name="musical_setup_title">Something more</string>
+    <string name="musical_setup_title">Tell us something more</string>
     <string name="musical_setup_description">What instruments do you play?</string>
 
 
