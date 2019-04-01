@@ -204,11 +204,15 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
     }
 
     public void uploadArtists(View v){
-        ref.child("artists").removeValue();
-        ref.child("conf").child("artistssetupactivity").setValue("true");
-        for(int i = 0; i < artistsChoosen.size();i++)
-            ref.child("artists").push().setValue(artistsChoosen.get(i).replace("\"", ""));
-        goToLocationDescriptionSetUpActivity();
+        if(artistsChoosen.size()>0){
+            ref.child("artists").removeValue();
+            ref.child("conf").child("artistssetupactivity").setValue("true");
+            for(int i = 0; i < artistsChoosen.size();i++)
+                ref.child("artists").push().setValue(artistsChoosen.get(i).replace("\"", ""));
+            goToLocationDescriptionSetUpActivity();
+        }
+       else
+           Toast.makeText(getApplicationContext(), getText(R.string.choose_one_artist), Toast.LENGTH_SHORT).show();
     }
 
     public void goToMainActivity(){

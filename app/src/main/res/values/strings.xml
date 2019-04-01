@@ -67,6 +67,8 @@
 
     <string name="artists_added">Artists added:</string>
 
+    <string name="choose_one_artist">At least you have to choose one artist</string>
+
     <!-- location description activity !-->
     <string name="location_description_title">The last step</string>
     <string name="location_description_description">Write something about you and set up your location</string>
