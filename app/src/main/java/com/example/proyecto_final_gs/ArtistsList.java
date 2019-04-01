@@ -50,8 +50,6 @@ public class ArtistsList extends ArrayAdapter<String> {
         artist = artist.replace("\"","");
         url = url.replace("\"","");
 
-        Log.e("urls", url);
-
         artistsText.setText(artist);
         Glide.with(context).load(url).into(artistImage);
 

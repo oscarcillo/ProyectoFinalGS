@@ -135,6 +135,17 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    public void goToMainActivity(){
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void goToLocationDescriptionSetUpActivity(){
+        Intent i = new Intent(this, LocationDescriptionSetUpActivity.class);
+        startActivity(i);
+        finish();
+    }
     //////////////////////////
     /////////////////////
 
@@ -144,7 +155,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String setupactivity = dataSnapshot.child("setupactivity").getValue(String.class);
                 String musicalsetupactivity = dataSnapshot.child("musicalsetupactivity").getValue(String.class);
+                String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
                 //
+                if(artistssetupactivity!=null){
+                    goToLocationDescriptionSetUpActivity();
+                    return;
+                }
                 if(musicalsetupactivity!=null){
                     goToArtistsSetUpActivity();
                     return;

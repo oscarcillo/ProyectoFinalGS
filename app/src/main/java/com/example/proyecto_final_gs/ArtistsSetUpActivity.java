@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -39,6 +41,9 @@ import java.util.List;
 public class ArtistsSetUpActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+    DatabaseReference ref = db.getReference("users").child(mAuth.getCurrentUser().getUid());
 
     //views
     ListView listViewArtists;
@@ -196,5 +201,25 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    public void uploadArtists(View v){
+        ref.child("artists").removeValue();
+        ref.child("conf").child("artistssetupactivity").setValue("true");
+        for(int i = 0; i < artistsChoosen.size();i++)
+            ref.child("artists").push().setValue(artistsChoosen.get(i).replace("\"", ""));
+        goToLocationDescriptionSetUpActivity();
+    }
+
+    public void goToMainActivity(){
+        Intent i = new Intent(this, MainActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void goToLocationDescriptionSetUpActivity(){
+        Intent i = new Intent(this, LocationDescriptionSetUpActivity.class);
+        startActivity(i);
+        finish();
     }
 }

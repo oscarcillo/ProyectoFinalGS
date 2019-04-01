@@ -50,6 +50,7 @@
     <!-- menu    !-->
     <string name="logout">Log-out</string>
     <string name="title_activity_musical_set_up">MusicalSetUpActivity</string>
+    <string name="settings">Settings</string>
 
     <!-- musical setup !-->
     <string name="musical_setup_title">Tell us something more</string>
@@ -65,6 +66,14 @@
     <string name="no_more_artists">You can\'t add more artists</string>
 
     <string name="artists_added">Artists added:</string>
+
+    <!-- location description activity !-->
+    <string name="location_description_title">The last step</string>
+    <string name="location_description_description">Write something about you and set up your location</string>
+
+    <string name="location_description_hint">Write here...</string>
+
+    <string name="find_location">Find location</string>
 
 
 </resources>
