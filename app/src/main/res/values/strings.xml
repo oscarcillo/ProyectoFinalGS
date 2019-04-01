@@ -57,10 +57,14 @@
 
     <!-- artist setup !-->
     <string name="artist_setup_title">Now choose your favourite artists</string>
-    <string name="artist_setup_description">Search for them and select as many as you want</string>
+    <string name="artist_setup_description">Search for them and select 20 as maximum</string>
 
     <string name="artist_added">Artist added</string>
     <string name="artist_already_added">Artist already added</string>
+    <string name="artist_deleted">Artist deleted</string>
+    <string name="no_more_artists">You can\'t add more artists</string>
+
+    <string name="artists_added">Artists added:</string>
 
 
 </resources>

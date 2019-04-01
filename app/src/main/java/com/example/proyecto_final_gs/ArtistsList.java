@@ -24,12 +24,15 @@ public class ArtistsList extends ArrayAdapter<String> {
     private Activity context;
     private List<String> artistsList;
     private List<String> imageList;
+    private List<String> enabled;
+    private ImageView checkImage;
 
-    public ArtistsList(Activity context, List<String> artistsList, List<String> imageList){
+    public ArtistsList(Activity context, List<String> artistsList, List<String> imageList, List<String> enabled){
         super(context, R.layout.layout_artists_list, artistsList);
         this.context = context;
         this.artistsList = artistsList;
         this.imageList = imageList;
+        this.enabled = enabled;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class ArtistsList extends ArrayAdapter<String> {
 
         final TextView artistsText = listViewItem.findViewById(R.id.artistText);
         final ImageView artistImage = listViewItem.findViewById(R.id.artistImage);
+        final ImageView checkImage = listViewItem.findViewById(R.id.checkImage);
 
         String artist = artistsList.get(position);
         String url = imageList.get(position);
@@ -50,6 +54,9 @@ public class ArtistsList extends ArrayAdapter<String> {
 
         artistsText.setText(artist);
         Glide.with(context).load(url).into(artistImage);
+
+        if(enabled.get(position).equals("true"))
+            checkImage.setVisibility(View.VISIBLE);
 
         return listViewItem;
     }

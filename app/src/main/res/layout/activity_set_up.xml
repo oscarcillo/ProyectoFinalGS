@@ -111,7 +111,8 @@
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/buttonColor"
         android:onClick="saveData"
-        android:text="@string/continue_" />
+        android:text="@string/continue_"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
     <ProgressBar
         android:id="@+id/progressBarRegister"

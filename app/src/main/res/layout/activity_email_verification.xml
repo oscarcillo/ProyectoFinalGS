@@ -58,6 +58,7 @@
         android:layout_marginTop="30dp"
         android:backgroundTint="@color/buttonColor"
         android:onClick="sendEmailAgain"
-        android:text="@string/send_email_again" />
+        android:text="@string/send_email_again"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
 </LinearLayout>

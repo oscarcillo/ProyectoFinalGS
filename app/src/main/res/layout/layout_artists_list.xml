@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/artistImage"
-        android:layout_width="98dp"
-        android:layout_height="79dp"
+        android:layout_width="105dp"
+        android:layout_height="77dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_weight="1"
@@ -18,9 +18,17 @@
 
     <TextView
         android:id="@+id/artistText"
-        android:layout_width="263dp"
+        android:layout_width="266dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="TextView"
         android:textSize="19sp" />
+
+    <ImageView
+        android:id="@+id/checkImage"
+        android:layout_width="78dp"
+        android:layout_height="65dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/checkbox_on_background" />
 </LinearLayout>

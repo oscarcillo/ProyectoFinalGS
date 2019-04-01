@@ -61,7 +61,7 @@
         android:text="@string/email_exp"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_light_pressed"
-        android:textSize="18sp"
+        android:textSize="16sp"
         tools:text="@string/email_exp" />
 
     <EditText
@@ -88,7 +88,8 @@
         android:layout_marginTop="5dp"
         android:backgroundTint="@color/buttonColor"
         android:onClick="createUserOrLogin"
-        android:text="@string/Sing_in" />
+        android:text="@string/Sing_in"
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
     <TextView
         android:id="@+id/textRegister"

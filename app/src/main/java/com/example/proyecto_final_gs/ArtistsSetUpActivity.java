@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,9 +43,11 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
     //views
     ListView listViewArtists;
     EditText searchText;
+    TextView artistsAddedText;
 
     //
     List<String> artistsChoosen = new ArrayList<>();
+    List<String> enabled = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,8 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
         //
         listViewArtists = findViewById(R.id.listViewArtists);
         searchText = findViewById(R.id.searchText);
+        artistsAddedText = findViewById(R.id.artistsAddedText);
+        //
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -122,25 +127,44 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
                                     .get("artistmatches").getAsJsonObject()
                                     .get("artist").getAsJsonArray();
                             //recorrer el array
-                            for(int i = 0; i < array.size();i++) {
+                            for(int i = 0; i <= 9;i++) {
                                 //obtener el nombre del artista
                                 lista.add(array.get(i).getAsJsonObject().get("name").toString());
                                 //obtener la imagen del artista
                                 JsonArray arrayImages = array.get(i).getAsJsonObject().get("image").getAsJsonArray();
                                 listaImages.add(arrayImages.get(2).getAsJsonObject().get("#text").toString());
+                                enabled.add("false");
                             }
                             //crear la lista
-                            ArtistsList adapter = new ArtistsList(ArtistsSetUpActivity.this, lista, listaImages);
+                            final ArtistsList adapter = new ArtistsList(ArtistsSetUpActivity.this, lista, listaImages, enabled);
                             listViewArtists.setAdapter(adapter);
+
+                            ////////////////////////
                             //listener para añadir artistas al hacer click sobre ellos
                             listViewArtists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    //if que comprueba que el artista aun no este seleccionado para que no se repitan
                                     if(!artistsChoosen.contains(lista.get(position))) {
+                                        //comprobar que no hay mas de 20 artistas ya seleccionados
+                                        if(artistsChoosen.size()>=20) {
+                                            Toast.makeText(getApplicationContext(),
+                                                    getText(R.string.no_more_artists), Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        //
                                         artistsChoosen.add(lista.get(position));
                                         Toast.makeText(getApplicationContext(),
                                                 getText(R.string.artist_added)+": "+lista.get(position),
                                                 Toast.LENGTH_SHORT).show();
+                                        //array que contiene string para comprobar si la lista debe mostrar o no el icono de check
+                                        //enabled.add(position, "true");
+                                        //listViewArtists.setAdapter(adapter);
+                                        //mostrar artistas seleccionados en la parte inferior de la actividad
+                                        artistsAddedText.setText(getText(R.string.artists_added));
+                                        for(int i = 0; i < artistsChoosen.size();i++)
+                                            artistsAddedText.append(artistsChoosen.get(i)
+                                                    .replace("\"", "") + ", ");
                                     }
                                     else
                                         Toast.makeText(getApplicationContext(),
@@ -148,6 +172,27 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
                                                 Toast.LENGTH_SHORT).show();
                                 }
                             });
+
+                            /////////////////////////
+                            //borrar artistas del array al hacer una pulsacion larga
+                            listViewArtists.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                                @Override
+                                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                                    artistsChoosen.remove(lista.get(position));
+                                    //enabled.set(position, "false");
+                                   // listViewArtists.setAdapter(adapter);
+                                    //mostrar mensaje de artista borrado
+                                    Toast.makeText(getApplicationContext(), getText(R.string.artist_deleted),
+                                            Toast.LENGTH_SHORT).show();
+                                    //
+                                    artistsAddedText.setText(getText(R.string.artists_added));
+                                    for(int i = 0; i < artistsChoosen.size();i++)
+                                        artistsAddedText.append(artistsChoosen.get(i)
+                                                .replace("\"", "") + ", ");
+                                    return true;
+                                }
+                            });
+                            /////////////////////
                         }
                     });
         }
