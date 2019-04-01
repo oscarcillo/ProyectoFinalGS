@@ -1,6 +1,7 @@
 package com.example.proyecto_final_gs;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -40,6 +43,9 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
     ListView listViewArtists;
     EditText searchText;
 
+    //
+    List<String> artistsChoosen = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +58,6 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                searchForArtists();
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -60,12 +65,6 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable s) {
-                searchForArtists();
-            }
-        });
-        searchText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
                 searchForArtists();
             }
         });
@@ -98,19 +97,17 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
     //////////////////////////////////////////
 
     public void searchForArtists(){
-        List<String> artistsList = new ArrayList<>();
-        //
-        artistsList = readJsonUrl("http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=" +
+        Log.e("text",  searchText.getText().toString());
+        readJsonUrl("http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=" +
                 searchText.getText().toString() +
                 "&api_key=70ffbde8c4000bc56aa92a1b062261dc&format=json");
         //
-        ArtistsList adapter = new ArtistsList(this, artistsList);
-        listViewArtists.setAdapter(adapter);
     }
 
-    public List<String> readJsonUrl(String url){
+    public void readJsonUrl(String url){
         //crear lista de nombres de artistas
         final List<String> lista = new ArrayList<>();
+        final List<String> listaImages = new ArrayList<>();
         //
         if(!searchText.getText().toString().equals("")){
             Ion.with(this)
@@ -125,13 +122,34 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
                                     .get("artistmatches").getAsJsonObject()
                                     .get("artist").getAsJsonArray();
                             //recorrer el array
-                            for(int i = 0; i < array.size();i++)
+                            for(int i = 0; i < array.size();i++) {
+                                //obtener el nombre del artista
                                 lista.add(array.get(i).getAsJsonObject().get("name").toString());
+                                //obtener la imagen del artista
+                                JsonArray arrayImages = array.get(i).getAsJsonObject().get("image").getAsJsonArray();
+                                listaImages.add(arrayImages.get(2).getAsJsonObject().get("#text").toString());
+                            }
+                            //crear la lista
+                            ArtistsList adapter = new ArtistsList(ArtistsSetUpActivity.this, lista, listaImages);
+                            listViewArtists.setAdapter(adapter);
+                            //listener para añadir artistas al hacer click sobre ellos
+                            listViewArtists.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    if(!artistsChoosen.contains(lista.get(position))) {
+                                        artistsChoosen.add(lista.get(position));
+                                        Toast.makeText(getApplicationContext(),
+                                                getText(R.string.artist_added)+": "+lista.get(position),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                        Toast.makeText(getApplicationContext(),
+                                                getText(R.string.artist_already_added),
+                                                Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     });
-            return lista;
         }
-        //lista.add("");
-        return lista;
     }
 }

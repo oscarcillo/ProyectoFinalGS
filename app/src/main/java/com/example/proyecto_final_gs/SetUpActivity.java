@@ -133,6 +133,7 @@ public class SetUpActivity extends AppCompatActivity implements DatePickerDialog
             ref.child("name").setValue(nameText.getText().toString());
             ref.child("birthday").setValue(birthdayText.getText().toString());
             ref.child("photoUrl").setValue("" + photoUrl);
+            ref.child("conf").child("setupactivity").setValue("true");
             goToMusicalSetUpActivity();
         }
     }

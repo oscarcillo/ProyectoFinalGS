@@ -10,17 +10,12 @@
     android:orientation="vertical"
     tools:context=".LoginActivity">
 
-    <RelativeLayout
-        android:layout_width="476dp"
-        android:layout_height="40dp">
-
-    </RelativeLayout>
-
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:text="@string/artist_setup_title"
         android:textAllCaps="false"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
@@ -62,8 +57,8 @@
     <ListView
         android:id="@+id/listViewArtists"
         android:layout_width="317dp"
-        android:layout_height="291dp"
-        android:layout_marginTop="10dp" />
+        android:layout_height="258dp"
+        android:layout_marginTop="0dp" />
 
     <Button
         android:id="@+id/registerButton"

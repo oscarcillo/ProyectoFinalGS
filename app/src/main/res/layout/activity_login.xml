@@ -51,13 +51,14 @@
 
     <Button
         android:id="@+id/emailLoginButton"
+        style="buttons"
         android:layout_width="225dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@android:drawable/sym_action_email"
         android:onClick="goToLoginEmailActivity"
         android:text="@string/login_email"
-        style="buttons"/>
+        android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
     <Button
         android:id="@+id/googleLoginButton"
@@ -66,7 +67,8 @@
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@drawable/google_icon"
         android:onClick="signIn"
-        android:text="@string/login_google" />
+        android:text="@string/login_google"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed" />
 
     <Button
         android:id="@+id/facebookLoginButton"
@@ -74,6 +76,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/buttonColor"
         android:drawableRight="@drawable/facebook_icon"
-        android:text="@string/login_facebook" />
+        android:text="@string/login_facebook"
+        android:textColor="@color/common_google_signin_btn_text_dark_pressed" />
 
 </LinearLayout>

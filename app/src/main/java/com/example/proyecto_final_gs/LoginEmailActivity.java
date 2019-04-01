@@ -2,6 +2,7 @@ package com.example.proyecto_final_gs;
 
 import android.content.Intent;
 import android.opengl.Visibility;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,12 +18,20 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginEmailActivity extends AppCompatActivity {
 
     //variable de autenticacion
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference ref = db.getReference("users");
 
     //views
     TextView emailText, passwordText;
@@ -78,7 +87,7 @@ public class LoginEmailActivity extends AppCompatActivity {
                     user = mAuth.getCurrentUser();
                     //comprobar si el mail está verificado
                     if(user.isEmailVerified())
-                        goToSetUpActivity();
+                        verifyConf();
                     else
                         goToEmailVerificationActivity();
 
@@ -98,17 +107,59 @@ public class LoginEmailActivity extends AppCompatActivity {
             startActivity(i);
     }
 
-    public void goToSetUpActivity(){
-        Intent i = new Intent(this, SetUpActivity.class);
-        startActivity(i);
-        this.finish();
-    }
-
     public void goToEmailVerificationActivity(){
         Intent i = new Intent(this, EmailVerificationActivity.class);
         i.putExtra("email", email);
         i.putExtra("password", password);
         startActivity(i);
         finish();
+    }
+
+    ///////////////////////////
+    ////////////////////////
+
+    public void goToSetupActivity(){
+        Intent i = new Intent(this, SetUpActivity.class);
+        i.putExtra("name", mAuth.getCurrentUser().getEmail());
+        startActivity(i);
+        finish();
+    }
+
+    public void goToMusicalSetUpActivity(){
+        Intent i = new Intent(this, MusicalSetUpActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    public void goToArtistsSetUpActivity(){
+        Intent i = new Intent(this, ArtistsSetUpActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    //////////////////////////
+    /////////////////////
+
+    public void verifyConf(){
+        ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String setupactivity = dataSnapshot.child("setupactivity").getValue(String.class);
+                String musicalsetupactivity = dataSnapshot.child("musicalsetupactivity").getValue(String.class);
+                //
+                if(musicalsetupactivity!=null){
+                    goToArtistsSetUpActivity();
+                    return;
+                }
+                else if(setupactivity!=null) {
+                    goToMusicalSetUpActivity();
+                    return;
+                }
+                else
+                    goToSetupActivity();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
     }
 }

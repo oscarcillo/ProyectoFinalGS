@@ -7,9 +7,13 @@
 
     <ImageView
         android:id="@+id/artistImage"
-        android:layout_width="82dp"
-        android:layout_height="112dp"
+        android:layout_width="98dp"
+        android:layout_height="79dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:layout_weight="1"
+        android:background="@android:drawable/ic_menu_gallery"
+        android:backgroundTint="@color/colorPrimaryDark"
         app:srcCompat="@drawable/common_full_open_on_phone" />
 
     <TextView
@@ -18,5 +22,5 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="TextView"
-        android:textSize="22sp" />
+        android:textSize="19sp" />
 </LinearLayout>

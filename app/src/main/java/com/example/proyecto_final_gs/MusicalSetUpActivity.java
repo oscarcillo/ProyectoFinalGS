@@ -111,6 +111,9 @@ public class MusicalSetUpActivity extends AppCompatActivity {
         //Insertar los nuevos valores
         for(int i = 0;i<choosenInstruments.size();i++)
             refUsers.child(""+i).setValue(choosenInstruments.get(i));
+        //subir el dato de la configuracion
+        DatabaseReference ref = db.getReference("users").child(user.getUid()).child("conf").child("musicalsetupactivity");
+        ref.setValue("true");
         //ir a la siguiente actividad
         goToArtistsSetUpActivity();
     }

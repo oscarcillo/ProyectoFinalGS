@@ -2,6 +2,7 @@ package com.example.proyecto_final_gs;
 
 import android.app.Activity;
 import android.media.Image;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,11 +23,13 @@ public class ArtistsList extends ArrayAdapter<String> {
 
     private Activity context;
     private List<String> artistsList;
+    private List<String> imageList;
 
-    public ArtistsList(Activity context, List<String> artistsList){
+    public ArtistsList(Activity context, List<String> artistsList, List<String> imageList){
         super(context, R.layout.layout_artists_list, artistsList);
         this.context = context;
         this.artistsList = artistsList;
+        this.imageList = imageList;
     }
 
     @Override
@@ -37,8 +42,14 @@ public class ArtistsList extends ArrayAdapter<String> {
         final ImageView artistImage = listViewItem.findViewById(R.id.artistImage);
 
         String artist = artistsList.get(position);
+        String url = imageList.get(position);
+        artist = artist.replace("\"","");
+        url = url.replace("\"","");
+
+        Log.e("urls", url);
 
         artistsText.setText(artist);
+        Glide.with(context).load(url).into(artistImage);
 
         return listViewItem;
     }

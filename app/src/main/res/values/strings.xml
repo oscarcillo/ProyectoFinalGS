@@ -59,5 +59,8 @@
     <string name="artist_setup_title">Now choose your favourite artists</string>
     <string name="artist_setup_description">Search for them and select as many as you want</string>
 
+    <string name="artist_added">Artist added</string>
+    <string name="artist_already_added">Artist already added</string>
+
 
 </resources>
