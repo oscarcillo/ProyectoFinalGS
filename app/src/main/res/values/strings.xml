@@ -1,5 +1,7 @@
 <resources>
 
+
+
     <!-- LOGIN ACTIVITY !-->
     <string name="login_email">Log in with email</string>
     <string name="login_google">Log in with Google</string>
@@ -73,7 +75,7 @@
     <string name="location_description_title">The last step</string>
     <string name="location_description_description">Write something about you and set up your location</string>
 
-    <string name="location_description_hint">Write here...</string>
+    <string name="location_description_hint">Write here... (250 characters max.)</string>
 
     <string name="find_location">Find location</string>
 

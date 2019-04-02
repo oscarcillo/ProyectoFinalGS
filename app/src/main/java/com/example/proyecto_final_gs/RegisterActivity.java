@@ -94,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void goToLoginEmailActivity(View v){
         Intent i = new Intent(this, LoginEmailActivity.class);
         startActivity(i);
+        finish();
     }
 
     public void goToEmailVerificationActivity(){

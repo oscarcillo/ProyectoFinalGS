@@ -80,8 +80,7 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
         });
     }
 
-    //MENU SUPERIOR/////////////////////////
-    ////////////////////////////////////////
+    // region MENU SUPERIOR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the main_menu; this adds items to the action bar if it is present.
@@ -103,14 +102,13 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
         startActivity(i);
         finish();
     }
-    ///////////////////////////////////////////
-    //////////////////////////////////////////
+    // endregion
 
     public void searchForArtists(){
         Log.e("text",  searchText.getText().toString());
         readJsonUrl("http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=" +
                 searchText.getText().toString() +
-                "&api_key=70ffbde8c4000bc56aa92a1b062261dc&format=json");
+                "&api_key="+getText(R.string.lastfm_key)+"&format=json");
         //
     }
 
@@ -209,21 +207,11 @@ public class ArtistsSetUpActivity extends AppCompatActivity {
             ref.child("conf").child("artistssetupactivity").setValue("true");
             for(int i = 0; i < artistsChoosen.size();i++)
                 ref.child("artists").push().setValue(artistsChoosen.get(i).replace("\"", ""));
-            goToLocationDescriptionSetUpActivity();
+            Utils.goToActivity(ArtistsSetUpActivity.this, LocationDescriptionSetUpActivity.class,
+                    null, true);
         }
        else
            Toast.makeText(getApplicationContext(), getText(R.string.choose_one_artist), Toast.LENGTH_SHORT).show();
     }
 
-    public void goToMainActivity(){
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToLocationDescriptionSetUpActivity(){
-        Intent i = new Intent(this, LocationDescriptionSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
 }

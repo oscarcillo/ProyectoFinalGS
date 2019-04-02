@@ -88,9 +88,13 @@ public class LoginEmailActivity extends AppCompatActivity {
                     //comprobar si el mail está verificado
                     if(user.isEmailVerified())
                         verifyConf();
-                    else
-                        goToEmailVerificationActivity();
-
+                    else{
+                        Bundle b = new Bundle();
+                        b.putString("email", email);
+                        b.putString("password", password);
+                        Utils.goToActivity(LoginEmailActivity.this, EmailVerificationActivity.class,
+                                b,true);
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(LoginEmailActivity.this,
@@ -103,53 +107,9 @@ public class LoginEmailActivity extends AppCompatActivity {
     }
 
     public void goToRegisterActivity(View v){
-            Intent i = new Intent(this, RegisterActivity.class);
-            startActivity(i);
+            Utils.goToActivity(LoginEmailActivity.this, RegisterActivity.class,
+                    null, true);
     }
-
-    public void goToEmailVerificationActivity(){
-        Intent i = new Intent(this, EmailVerificationActivity.class);
-        i.putExtra("email", email);
-        i.putExtra("password", password);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToLocationDescriptionSetUpActivity(){
-        Intent i = new Intent(this, LocationDescriptionSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    ///////////////////////////
-    ////////////////////////
-
-    public void goToSetupActivity(){
-        Intent i = new Intent(this, SetUpActivity.class);
-        i.putExtra("name", mAuth.getCurrentUser().getEmail());
-        startActivity(i);
-        finish();
-    }
-
-    public void goToMusicalSetUpActivity(){
-        Intent i = new Intent(this, MusicalSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToArtistsSetUpActivity(){
-        Intent i = new Intent(this, ArtistsSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToMainActivity(){
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        finish();
-    }
-    //////////////////////////
-    /////////////////////
 
     public void verifyConf(){
         ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
@@ -160,19 +120,25 @@ public class LoginEmailActivity extends AppCompatActivity {
                 String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
                 //
                 if(artistssetupactivity!=null){
-                    goToLocationDescriptionSetUpActivity();
+                    Utils.goToActivity(LoginEmailActivity.this, LocationDescriptionSetUpActivity.class,
+                            null, true);
                     return;
                 }
                 if(musicalsetupactivity!=null){
-                    goToArtistsSetUpActivity();
+                    Utils.goToActivity(LoginEmailActivity.this, ArtistsSetUpActivity.class,
+                            null, true);
                     return;
                 }
                 else if(setupactivity!=null) {
-                    goToMusicalSetUpActivity();
+                    Utils.goToActivity(LoginEmailActivity.this, MusicalSetUpActivity.class,
+                            null, true);
                     return;
                 }
-                else
-                    goToSetupActivity();
+                else{
+                    Bundle b = new Bundle();
+                    b.putString("name", mAuth.getCurrentUser().getEmail());
+                    Utils.goToActivity(LoginEmailActivity.this, SetUpActivity.class,b, true);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }

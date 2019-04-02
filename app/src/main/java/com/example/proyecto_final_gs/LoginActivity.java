@@ -1,5 +1,7 @@
 package com.example.proyecto_final_gs;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -59,13 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
-    public void goToLoginEmailActivity(View v){
-        Intent i = new Intent(this, LoginEmailActivity.class);
-        startActivity(i);
-    }
-
-    //google signin/////////////////
-    ////////////////////////////////
+    // region google signin
     public void signIn(View v) {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, 101);
@@ -113,43 +109,12 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-    ///////////////////////////
-    ////////////////////////
-
-    public void goToSetupActivity(){
-        Intent i = new Intent(this, SetUpActivity.class);
-        i.putExtra("name", mAuth.getCurrentUser().getEmail());
-        startActivity(i);
-        finish();
-    }
-
-    public void goToMusicalSetUpActivity(){
-        Intent i = new Intent(this, MusicalSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToArtistsSetUpActivity(){
-        Intent i = new Intent(this, ArtistsSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToMainActivity(){
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToLocationDescriptionSetUpActivity(){
-        Intent i = new Intent(this, LocationDescriptionSetUpActivity.class);
-        startActivity(i);
-        finish();
-    }
-    //////////////////////////
-    /////////////////////
+    // endregion
 
     public void verifyConf(){
+
+
+
         ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -158,23 +123,36 @@ public class LoginActivity extends AppCompatActivity {
                 String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
                 //
                 if(artistssetupactivity!=null){
-                    goToLocationDescriptionSetUpActivity();
+                    Utils.goToActivity(LoginActivity.this, LocationDescriptionSetUpActivity.class,
+                            null, true);
                     return;
                 }
                 if(musicalsetupactivity!=null){
-                    goToArtistsSetUpActivity();
+                    Utils.goToActivity(LoginActivity.this, ArtistsSetUpActivity.class,
+                            null, true);
                     return;
                 }
                 else if(setupactivity!=null) {
-                    goToMusicalSetUpActivity();
+                    Utils.goToActivity(LoginActivity.this, MusicalSetUpActivity.class,
+                            null, true);
                     return;
                 }
-                else
-                    goToSetupActivity();
+                else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", mAuth.getCurrentUser().getEmail());
+                    Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
+                            bundle, true);
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
+    }
+
+    //Método que se ejecuta al pulsar el botón de Log-in con cuenta de correo
+    public void goToLoginEmailActivity(View v){
+        Utils.goToActivity(LoginActivity.this, LoginEmailActivity.class,
+                null, false);
     }
 
 }

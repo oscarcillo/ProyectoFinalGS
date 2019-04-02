@@ -48,13 +48,14 @@
         android:gravity="top|left"
         android:hint="@string/location_description_hint"
         android:inputType="textMultiLine"
-        android:lines="6"
+        android:lines="9"
         android:overScrollMode="always"
         android:scrollbarStyle="insideInset"
         android:scrollbars="vertical"
         android:scrollHorizontally="false"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:maxLength="250"/>
 
     <LinearLayout
         android:layout_width="262dp"
@@ -78,6 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/buttonColor"
+            android:onClick="getLocation"
             android:tint="@color/common_google_signin_btn_text_dark_default"
             app:srcCompat="@android:drawable/ic_menu_mylocation" />
     </LinearLayout>
@@ -88,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/buttonColor"
-        android:onClick="uploadArtists"
+        android:onClick="goToMainActivity"
         android:text="@string/continue_"
         android:textColor="@color/common_google_signin_btn_text_dark_default" />
 

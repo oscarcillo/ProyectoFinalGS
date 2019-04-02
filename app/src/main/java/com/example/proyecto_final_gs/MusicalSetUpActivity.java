@@ -79,15 +79,11 @@ public class MusicalSetUpActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.logout:
                 mAuth.signOut();
-                goToLoginActivity();
+                Utils.goToActivity(MusicalSetUpActivity.this, LoginActivity.class,
+                        null, true);
                 break;
         }
         return true;
-    }
-    public void goToLoginActivity(){
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-        finish();
     }
     ///////////////////////////////////////////
     //////////////////////////////////////////
@@ -97,7 +93,8 @@ public class MusicalSetUpActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
-                    goToArtistsSetUpActivity();
+                    Utils.goToActivity(MusicalSetUpActivity.this, ArtistsSetUpActivity.class,
+                            null, false);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
@@ -115,11 +112,8 @@ public class MusicalSetUpActivity extends AppCompatActivity {
         DatabaseReference ref = db.getReference("users").child(user.getUid()).child("conf").child("musicalsetupactivity");
         ref.setValue("true");
         //ir a la siguiente actividad
-        goToArtistsSetUpActivity();
+        Utils.goToActivity(MusicalSetUpActivity.this, ArtistsSetUpActivity.class,
+                null, false);
     }
 
-    public void goToArtistsSetUpActivity(){
-        Intent i = new Intent(this, ArtistsSetUpActivity.class);
-        startActivity(i);
-    }
 }

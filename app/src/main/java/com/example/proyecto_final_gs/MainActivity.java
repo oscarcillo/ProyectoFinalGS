@@ -32,15 +32,11 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.logout:
                 mAuth.signOut();
-                goToLoginActivity();
+                Utils.goToActivity(MainActivity.this, LoginActivity.class,
+                        null, true);
                 break;
         }
         return true;
-    }
-    public void goToLoginActivity(){
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
-        finish();
     }
     ///////////////////////////////////////////
     //////////////////////////////////////////
