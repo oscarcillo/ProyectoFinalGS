@@ -4,14 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/login_background"
     android:orientation="vertical"
-    tools:context=".setup.SetUpActivity">
+    tools:context=".SettingsActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayoutFragments"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-    </FrameLayout>
-
+    <ListView
+        android:id="@+id/listViewSettings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

@@ -1,7 +1,6 @@
 <resources>
 
 
-
     <!-- LOGIN ACTIVITY !-->
     <string name="login_email">Log in with email</string>
     <string name="login_google">Log in with Google</string>
@@ -58,6 +57,8 @@
     <string name="musical_setup_title">Tell us something more</string>
     <string name="musical_setup_description">What instruments do you play?</string>
 
+    <string name="musical_setup_choose_instrument">At least, you have to choose one instrument</string>
+
     <!-- artist setup !-->
     <string name="artist_setup_title">Now choose your favourite artists</string>
     <string name="artist_setup_description">Search for them and select 20 as maximum</string>
@@ -78,6 +79,13 @@
     <string name="location_description_hint">Write here... (250 characters max.)</string>
 
     <string name="find_location">Find location</string>
+
+    <!-- settings !-->
+    <string name="profile_information">Profile Information</string>
+    <string name="instruments_selection">Instrument Selection</string>
+    <string name="artist_selection">Artist Selection</string>
+    <string name="location_description">Description and Location</string>
+    <string name="delete_account">Delete account</string>
 
 
 </resources>

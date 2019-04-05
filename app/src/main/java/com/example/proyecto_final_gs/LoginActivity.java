@@ -1,16 +1,14 @@
 package com.example.proyecto_final_gs;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,11 +21,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -49,7 +44,8 @@ public class LoginActivity extends AppCompatActivity {
         //comprobar que el usuario esta logueado para saltar esta actividad
         if(mAuth.getCurrentUser()!=null){
             //verificar a que actividad de confgiuración tiene que ir el usuario
-            verifyConf();
+            Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
+                    null, true);
         }
         //
         progressBarLogin = findViewById(R.id.progressBarLogin);
@@ -98,12 +94,11 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d("dsg", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            verifyConf();
+                            Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
+                                    null, true);
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w("asdf", "signInWithCredential:failure", task.getException());
                             progressBarLogin.setVisibility(View.INVISIBLE);
                         }
                     }
@@ -111,10 +106,7 @@ public class LoginActivity extends AppCompatActivity {
     }
     // endregion
 
-    public void verifyConf(){
-
-
-
+    /*public void verifyConf(){
         ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -123,31 +115,31 @@ public class LoginActivity extends AppCompatActivity {
                 String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
                 //
                 if(artistssetupactivity!=null){
-                    Utils.goToActivity(LoginActivity.this, LocationDescriptionSetUpActivity.class,
+                    Utils.goToActivity(LoginActivity.this, LocationDescriptionSetUpFragment.class,
                             null, true);
                     return;
                 }
                 if(musicalsetupactivity!=null){
-                    Utils.goToActivity(LoginActivity.this, ArtistsSetUpActivity.class,
+                    Utils.goToActivity(LoginActivity.this, ArtistsSetUpFragment.class,
                             null, true);
                     return;
                 }
                 else if(setupactivity!=null) {
-                    Utils.goToActivity(LoginActivity.this, MusicalSetUpActivity.class,
+                    Utils.goToActivity(LoginActivity.this, MusicalSetUpFragment.class,
                             null, true);
                     return;
                 }
                 else {
                     Bundle bundle = new Bundle();
                     bundle.putString("name", mAuth.getCurrentUser().getEmail());
-                    Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
+                    Utils.goToActivity(LoginActivity.this, PersonalSetUpFragment.class,
                             bundle, true);
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
-    }
+    }*/
 
     //Método que se ejecuta al pulsar el botón de Log-in con cuenta de correo
     public void goToLoginEmailActivity(View v){

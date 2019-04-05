@@ -3,9 +3,8 @@
     package="com.example.proyecto_final_gs">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -16,21 +15,13 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LocationDescriptionSetUpActivity"
+
+        <activity android:name=".setup.SetUpActivity"
+            android:windowSoftInputMode="adjustPan"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".ArtistsSetUpActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".MusicalSetUpActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SetUpActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" ></activity>
+
+        <activity android:name=".SettingsActivity" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"

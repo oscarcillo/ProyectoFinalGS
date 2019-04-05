@@ -7,10 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.proyecto_final_gs.setup.fragments.PersonalSetUpFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Set;
 
 public class EmailVerificationActivity extends AppCompatActivity {
 
@@ -50,7 +49,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
     public void checkEmailVerification(){
         mAuth.signInWithEmailAndPassword(email, password);
         if(user.isEmailVerified()) {
-            Utils.goToActivity(EmailVerificationActivity.this, SetUpActivity.class,
+            Utils.goToActivity(EmailVerificationActivity.this, PersonalSetUpFragment.class,
                     null, true);
             isActivated = true;
             Toast.makeText(this, getResources().getText(R.string.email_verified), Toast.LENGTH_SHORT).show();

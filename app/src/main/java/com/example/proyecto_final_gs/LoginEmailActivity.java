@@ -1,8 +1,5 @@
 package com.example.proyecto_final_gs;
 
-import android.content.Intent;
-import android.opengl.Visibility;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,9 +9,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.proyecto_final_gs.setup.fragments.ArtistsSetUpFragment;
+import com.example.proyecto_final_gs.setup.fragments.LocationDescriptionSetUpFragment;
+import com.example.proyecto_final_gs.setup.fragments.MusicalSetUpFragment;
+import com.example.proyecto_final_gs.setup.fragments.PersonalSetUpFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -120,24 +120,24 @@ public class LoginEmailActivity extends AppCompatActivity {
                 String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
                 //
                 if(artistssetupactivity!=null){
-                    Utils.goToActivity(LoginEmailActivity.this, LocationDescriptionSetUpActivity.class,
+                    Utils.goToActivity(LoginEmailActivity.this, LocationDescriptionSetUpFragment.class,
                             null, true);
                     return;
                 }
                 if(musicalsetupactivity!=null){
-                    Utils.goToActivity(LoginEmailActivity.this, ArtistsSetUpActivity.class,
+                    Utils.goToActivity(LoginEmailActivity.this, ArtistsSetUpFragment.class,
                             null, true);
                     return;
                 }
                 else if(setupactivity!=null) {
-                    Utils.goToActivity(LoginEmailActivity.this, MusicalSetUpActivity.class,
+                    Utils.goToActivity(LoginEmailActivity.this, MusicalSetUpFragment.class,
                             null, true);
                     return;
                 }
                 else{
                     Bundle b = new Bundle();
                     b.putString("name", mAuth.getCurrentUser().getEmail());
-                    Utils.goToActivity(LoginEmailActivity.this, SetUpActivity.class,b, true);
+                    Utils.goToActivity(LoginEmailActivity.this, PersonalSetUpFragment.class,b, true);
                 }
             }
             @Override

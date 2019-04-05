@@ -44,12 +44,11 @@
         android:layout_marginTop="10dp" />
 
     <Button
-        android:id="@+id/registerButton"
+        android:id="@+id/instrumentsButton"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:backgroundTint="@color/buttonColor"
-        android:onClick="uploadChoosenInstrumentsFirebase"
         android:text="@string/continue_"
         android:textColor="@color/common_google_signin_btn_text_dark_default" />
 

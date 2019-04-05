@@ -1,0 +1,89 @@
+<resources>
+    <!-- LOGIN ACTIVITY !-->
+    <string name="login_email">Log-in con email</string>
+    <string name="login_google">Log-in con Google</string>
+    <string name="login_facebook">Log-in con Facebook</string>
+
+    <string name="app_name">Musyzian</string>
+    <string name="app_description">Encuentra músicos cerca de ti</string>
+
+    <!-- LOGIJN ACTIVITY EMAIL !-->
+    <string name="email_exp">Introduce el Email y Password para unirte o crea una cuenta</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="Sing_in">Inicia sesión</string>
+    <string name="register_text">Click aquí para crear una nueva cuenta</string>
+
+    <string name="email_error_empty">El email no puede estar vacío</string>
+    <string name="email_error_form">El email no es válido</string>
+    <string name="password_error_empty">La contraseña no puede estar vacía</string>
+    <string name="password_error_length">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_singin">Email o contraseña incorrecto</string>
+
+    <!--register email activity !-->
+    <string name="title_register">Introduce el email y la contraseña para crear una nueva cuenta</string>
+    <string name="return_login">Volver a la pantalla de inicio de sesión</string>
+    <string name="register">Registrarse</string>
+
+    <string name="user_registered">Usuario registrado correctamente</string>
+    <string name="user_not_registered">La cuenta no ha podido ser creada</string>
+
+    <!-- email verification activity !-->
+    <string name="verification_text">Se ha enviado un mensaje a tu dirección de correo. Abrelo
+        y haz click en el enlace para verificar la cuenta.</string>
+    <string name="send_email_again">Enviar el mail otra vez</string>
+    <string name="email_verified">Email verificado</string>
+
+    <!-- setup activity !-->
+    <string name="set_up_tiutle">Comencemos</string>
+    <string name="set_up_description">Introduce tus datos personales</string>
+
+    <string name="click_change_image">Haz click sobre la imagen para elegir una</string>
+
+    <string name="name">Nombre</string>
+    <string name="birthday">Cumpleaños</string>
+    <string name="continue_">Continuar</string>
+
+    <string name="incomplete_data">Tienes que introducir todos los datos</string>
+
+    <!-- menu    !-->
+    <string name="logout">Cerrar sesión</string>
+    <string name="title_activity_musical_set_up">MusicalSetUpActivity</string>
+    <string name="settings">Configuración</string>
+
+    <!-- musical setup !-->
+    <string name="musical_setup_title">Cuentanos algo más</string>
+    <string name="musical_setup_description">¿Qué instrumentos tocas?</string>
+
+    <string name="musical_setup_choose_instrument">Al menos tienes que elegir un instrumento</string>
+
+    <!-- artist setup !-->
+    <string name="artist_setup_title">Ahora elige tus artistas preferidos</string>
+    <string name="artist_setup_description">Buscalos y selecciona 20 como máximo</string>
+
+    <string name="artist_added">Artista añadido</string>
+    <string name="artist_already_added">Ya has elegido este artista</string>
+    <string name="artist_deleted">Artista eliminado</string>
+    <string name="no_more_artists">No puedes añadir más artistas</string>
+
+    <string name="artists_added">Artistas añadidos:</string>
+
+    <string name="choose_one_artist">Como mínimo tienes que elegir un artista</string>
+
+    <!-- location description activity !-->
+    <string name="location_description_title">El último paso</string>
+    <string name="location_description_description">Escribe algo sobre ti y configura tu localización</string>
+
+    <string name="location_description_hint">Escribe aquí... (250 caracteres max.)</string>
+
+    <string name="find_location">Encontrar localización</string>
+
+    <!-- settings !-->
+    <string name="profile_information">Información de Perfil</string>
+    <string name="instruments_selection">Selección de instrumentos</string>
+    <string name="artist_selection">Selección de artistas</string>
+    <string name="location_description">Descripción y Localización</string>
+    <string name="delete_account">Borrar cuenta</string>
+
+
+</resources>
