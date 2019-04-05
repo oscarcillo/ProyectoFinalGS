@@ -4,17 +4,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 public class SettingsActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference ref = db.getReference("users");
 
     //views
     ListView listViewSettings;
@@ -41,6 +51,17 @@ public class SettingsActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 array);
         listViewSettings.setAdapter(arrayAdapter);
+
+        listViewSettings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch(position){
+                    case 4:
+                        deleteAccount();
+                        break;
+                }
+            }
+        });
     }
 
     // region *Menu Superior*
@@ -68,5 +89,16 @@ public class SettingsActivity extends AppCompatActivity {
     }
     // endregion
 
+    public void deleteAccount(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        ref.child(user.getUid()).removeValue();
+        user.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), getText(R.string.account_deleted), Toast.LENGTH_SHORT).show();
+                Utils.goToActivity(getApplicationContext(), LoginActivity.class, null, true);
+            }
+        });
+    }
 
 }

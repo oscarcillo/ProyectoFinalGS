@@ -85,5 +85,7 @@
     <string name="location_description">Descripción y Localización</string>
     <string name="delete_account">Borrar cuenta</string>
 
+    <string name="account_deleted">Cuenta eliminada</string>
+
 
 </resources>

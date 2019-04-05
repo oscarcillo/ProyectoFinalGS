@@ -87,5 +87,7 @@
     <string name="location_description">Description and Location</string>
     <string name="delete_account">Delete account</string>
 
+    <string name="account_deleted">Account deleted</string>
+
 
 </resources>
