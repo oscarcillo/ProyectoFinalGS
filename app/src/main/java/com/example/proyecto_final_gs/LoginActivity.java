@@ -1,9 +1,8 @@
 package com.example.proyecto_final_gs;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -14,22 +13,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.musyzian.firebase.FirebaseManager;
 
 public class LoginActivity extends AppCompatActivity {
 
-    FirebaseAuth mAuth;
 
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference ref = db.getReference("users");
+    FirebaseManager manager;
 
     GoogleSignInClient mGoogleSignInClient;
 
@@ -39,13 +29,29 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        manager = FirebaseManager.get();
         //
-        mAuth = FirebaseAuth.getInstance();
         //comprobar que el usuario esta logueado para saltar esta actividad
-        if(mAuth.getCurrentUser()!=null){
+        if(manager.userIsSigned()){
+            setContentView(R.layout.default_layout);
             //verificar a que actividad de confgiuración tiene que ir el usuario
-            Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
-                    null, true);
+            if(manager.isEmailVerified())
+                manager.isSetUpCompleted(new FirebaseManager.OnFirebaseEventListener() {
+                    @Override
+                    public void onResult(Boolean success) {
+                        if(success)
+                        if(success)
+                            Utils.goToActivity(LoginActivity.this, MainActivity.class,
+                                    null, true);
+                        else
+                            Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
+                                    null, true);
+                    }
+                });
+            else {
+                manager.signOut();
+                setContentView(R.layout.activity_login);
+            }
         }
         //
         progressBarLogin = findViewById(R.id.progressBarLogin);
@@ -87,59 +93,30 @@ public class LoginActivity extends AppCompatActivity {
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         progressBarLogin.setVisibility(View.VISIBLE);
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
-                                    null, true);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            progressBarLogin.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                });
-    }
-    // endregion
-
-    /*public void verifyConf(){
-        ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
+        manager.signInGoogle(acct.getIdToken(), new FirebaseManager.OnFirebaseEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String setupactivity = dataSnapshot.child("setupactivity").getValue(String.class);
-                String musicalsetupactivity = dataSnapshot.child("musicalsetupactivity").getValue(String.class);
-                String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
-                //
-                if(artistssetupactivity!=null){
-                    Utils.goToActivity(LoginActivity.this, LocationDescriptionSetUpFragment.class,
-                            null, true);
-                    return;
-                }
-                if(musicalsetupactivity!=null){
-                    Utils.goToActivity(LoginActivity.this, ArtistsSetUpFragment.class,
-                            null, true);
-                    return;
-                }
-                else if(setupactivity!=null) {
-                    Utils.goToActivity(LoginActivity.this, MusicalSetUpFragment.class,
-                            null, true);
-                    return;
-                }
-                else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", mAuth.getCurrentUser().getEmail());
-                    Utils.goToActivity(LoginActivity.this, PersonalSetUpFragment.class,
-                            bundle, true);
+            public void onResult(Boolean success) {
+                if (success) {
+                    manager.isSetUpCompleted(new FirebaseManager.OnFirebaseEventListener() {
+                        @Override
+                        public void onResult(Boolean successs) {
+                            if(successs)
+                                Utils.goToActivity(LoginActivity.this, MainActivity.class,
+                                        null, true);
+                            else
+                                Utils.goToActivity(LoginActivity.this, SetUpActivity.class,
+                                        null, true);
+                        }
+                    });
+                } else {
+                    progressBarLogin.setVisibility(View.INVISIBLE);
                 }
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
-    }*/
+
+    }
+
+    //endregion
 
     //Método que se ejecuta al pulsar el botón de Log-in con cuenta de correo
     public void goToLoginEmailActivity(View v){

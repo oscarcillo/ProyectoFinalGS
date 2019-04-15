@@ -1,6 +1,7 @@
 package com.example.proyecto_final_gs.setup.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,25 +20,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.proyecto_final_gs.ArtistsList;
+import com.example.proyecto_final_gs.SettingsActivity;
+import com.example.proyecto_final_gs.Utils;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
 import com.example.proyecto_final_gs.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.musyzian.firebase.FirebaseManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArtistsSetUpFragment extends Fragment {
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-
-    DatabaseReference ref = db.getReference("users").child(mAuth.getCurrentUser().getUid());
+    FirebaseManager manager;
 
     //views
     ListView listViewArtists;
@@ -56,6 +54,9 @@ public class ArtistsSetUpFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artists_set_up, container, false);
 
+        //firebase manager
+        manager = FirebaseManager.get();
+
         //views import
         listViewArtists = view.findViewById(R.id.listViewArtists);
         searchText = view.findViewById(R.id.searchText);
@@ -67,6 +68,17 @@ public class ArtistsSetUpFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 uploadArtists(v);
+            }
+        });
+
+        //cargar lista de artistas de la base de datos
+        manager.loadArtistsList(new FirebaseManager.OnFirebaseLoadInstruments() {
+            @Override
+            public void onResult(List<String> instruments) {
+                artistsChoosen = instruments;
+                for(int i = 0; i < instruments.size();i++)
+                    artistsAddedText.append(instruments.get(i)
+                            .replace("\"", "") + ", ");
             }
         });
 
@@ -139,7 +151,7 @@ public class ArtistsSetUpFragment extends Fragment {
                                             return;
                                         }
                                         //
-                                        artistsChoosen.add(lista.get(position));
+                                        artistsChoosen.add(lista.get(position).replace("\"", ""));
                                         Toast.makeText(getActivity(),
                                                 getText(R.string.artist_added)+": "+lista.get(position),
                                                 Toast.LENGTH_SHORT).show();
@@ -164,9 +176,10 @@ public class ArtistsSetUpFragment extends Fragment {
                             listViewArtists.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                                 @Override
                                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                    artistsChoosen.remove(lista.get(position));
+                                    artistsChoosen.remove(lista.get(position).replace("\"", ""));
+                                    Log.e("delete", ""+artistsChoosen);
                                     //enabled.set(position, "false");
-                                   // listViewArtists.setAdapter(adapter);
+                                    // listViewArtists.setAdapter(adapter);
                                     //mostrar mensaje de artista borrado
                                     Toast.makeText(getContext(), getText(R.string.artist_deleted),
                                             Toast.LENGTH_SHORT).show();
@@ -186,13 +199,16 @@ public class ArtistsSetUpFragment extends Fragment {
 
     public void uploadArtists(View v){
         if(artistsChoosen.size()>0){
-            ref.child("artists").removeValue();
-            ref.child("conf").child("artistssetupactivity").setValue("true");
-            for(int i = 0; i < artistsChoosen.size();i++)
-                ref.child("artists").push().setValue(artistsChoosen.get(i).replace("\"", ""));
+            manager.uploadArtistsData(artistsChoosen);
 
-            //go to the next fragment
-            mListener.changeFragment(4);
+            //comprobar si debe cambiar de fragmento o volver al menu de opciones
+            Intent i = getActivity().getIntent();
+            String fragment = i.getStringExtra("fragment");
+            if(fragment!=null)
+                Utils.goToActivity(getActivity(), SettingsActivity.class,
+                        null, true);
+            else
+                mListener.changeFragment(4);
         }
        else
            Toast.makeText(getActivity(), getText(R.string.choose_one_artist), Toast.LENGTH_SHORT).show();
@@ -209,14 +225,11 @@ public class ArtistsSetUpFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-
     }
-
     //endregion
 
 }

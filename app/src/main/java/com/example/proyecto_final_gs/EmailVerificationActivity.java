@@ -7,14 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.example.proyecto_final_gs.setup.fragments.PersonalSetUpFragment;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+import com.musyzian.firebase.FirebaseManager;
 
 public class EmailVerificationActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
+    FirebaseManager manager;
 
     String email, password;
 
@@ -26,9 +26,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_email_verification);
         //
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-
+        manager = FirebaseManager.get();
         //recibir usuario y contraseña
         Intent i = getIntent();
         email = i.getStringExtra("email");
@@ -47,17 +45,21 @@ public class EmailVerificationActivity extends AppCompatActivity {
     }
 
     public void checkEmailVerification(){
-        mAuth.signInWithEmailAndPassword(email, password);
-        if(user.isEmailVerified()) {
-            Utils.goToActivity(EmailVerificationActivity.this, PersonalSetUpFragment.class,
-                    null, true);
-            isActivated = true;
-            Toast.makeText(this, getResources().getText(R.string.email_verified), Toast.LENGTH_SHORT).show();
-        }
+        manager.signInEmailPassword(email, password, new FirebaseManager.OnFirebaseEventListener() {
+            @Override
+            public void onResult(Boolean success) {
+                if(manager.isEmailVerified()) {
+                    Utils.goToActivity(EmailVerificationActivity.this, SetUpActivity.class,
+                            null, true);
+                    isActivated = true;
+                    Toast.makeText(getApplicationContext(), getResources().getText(R.string.email_verified), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void sendEmailAgain(View v){
-        user.sendEmailVerification();
+        manager.sendEmailVerification();
     }
 
     @Override

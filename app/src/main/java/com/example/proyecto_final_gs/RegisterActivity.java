@@ -11,16 +11,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.musyzian.firebase.FirebaseManager;
 
 public class RegisterActivity extends AppCompatActivity {
 
     //variables firebase
-    private FirebaseAuth mAuth;
+    FirebaseManager manager;
 
     //views
     EditText emailRegisterText, passwordRegisterText;
@@ -33,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         //inicializar variables
-        mAuth = FirebaseAuth.getInstance();
+        manager = FirebaseManager.get();
         //
         emailRegisterText = findViewById(R.id.emailRegisterText);
         passwordRegisterText = findViewById(R.id.passwordEmailText);
@@ -67,41 +63,32 @@ public class RegisterActivity extends AppCompatActivity {
         }
         //
         progreso.setVisibility(View.VISIBLE);
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                           Toast.makeText(getApplicationContext(),
-                                   getResources().getString(R.string.user_registered),
-                                   Toast.LENGTH_SHORT).show();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            user.sendEmailVerification();
-                            //mAuth.signInWithEmailAndPassword(email, password);
-                            goToEmailVerificationActivity();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(getApplicationContext(),
-                                    getResources().getString(R.string.user_not_registered),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        progreso.setVisibility(View.INVISIBLE);
-                    }
-                });
+
+        manager.createUserEmailPassword(email, password, new FirebaseManager.OnFirebaseEventListener() {
+            @Override
+            public void onResult(Boolean success) {
+                if (success) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Toast.makeText(getApplicationContext(),
+                            getText(R.string.user_registered),
+                            Toast.LENGTH_SHORT).show();
+                    //enviar email de verificación
+                    manager.sendEmailVerification();
+                    //ir a la actividad de verificación de email
+                    Bundle b = new Bundle();
+                    b.putString("email", email);
+                    b.putString("password", password);
+                    Utils.goToActivity(RegisterActivity.this, EmailVerificationActivity.class,
+                            b, true);
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Toast.makeText(getApplicationContext(),
+                            getText(R.string.user_not_registered),
+                            Toast.LENGTH_SHORT).show();
+                }
+                progreso.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
-    public void goToLoginEmailActivity(View v){
-        Intent i = new Intent(this, LoginEmailActivity.class);
-        startActivity(i);
-        finish();
-    }
-
-    public void goToEmailVerificationActivity(){
-        Intent i = new Intent(this, EmailVerificationActivity.class);
-        i.putExtra("email", email);
-        i.putExtra("password", password);
-        startActivity(i);
-        finish();
-    }
 }

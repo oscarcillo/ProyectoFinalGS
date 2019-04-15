@@ -43,10 +43,11 @@
     <string name="click_change_image">Click over the image to choose one</string>
 
     <string name="name">Name</string>
-    <string name="birthday">Birthday</string>
-    <string name="continue_">Continue</string>
+    <string name="birthday">Birthday (DD/MM/YYYY)</string>
+    <string name="continue_">Save</string>
 
     <string name="incomplete_data">You have to fill all the data</string>
+    <string name="valid_date">You must write a valid date (DD/MM/YYYY)</string>
 
     <!-- menu    !-->
     <string name="logout">Log-out</string>
@@ -80,14 +81,29 @@
 
     <string name="find_location">Find location</string>
 
+    <string name="fill_description_location">You have to fill all the information</string>
+
     <!-- settings !-->
     <string name="profile_information">Profile Information</string>
     <string name="instruments_selection">Instrument Selection</string>
     <string name="artist_selection">Artist Selection</string>
     <string name="location_description">Description and Location</string>
+    <string name="change_password">Change password</string>
     <string name="delete_account">Delete account</string>
 
     <string name="account_deleted">Account deleted</string>
+
+    <string name="delete_account_confirmation">Write your password to delete this account</string>
+    <string name="delete_account_confirmation2">Are you sure?</string>
+
+    <string name="dialog_ok">Ok</string>
+    <string name="dialog_cancel">Cancel</string>
+
+    <string name="user_not_deleted">The account couldn\'t be deleted</string>
+    <string name="user_deleted">The account has been deleted</string>
+
+    <string name="password_changed">Password changed</string>
+    <string name="password_not_changed">Password not changed</string>
 
 
 </resources>

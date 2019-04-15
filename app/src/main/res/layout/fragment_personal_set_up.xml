@@ -81,25 +81,16 @@
 
         <EditText
             android:id="@+id/birthdayText"
-            android:layout_width="232dp"
+            android:layout_width="277dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/common_google_signin_btn_text_light_default"
             android:clickable="false"
-            android:cursorVisible="false"
             android:editable="false"
             android:ems="10"
             android:enabled="true"
             android:hint="@string/birthday"
-            android:inputType="textPersonName"
-            android:textIsSelectable="false" />
+            android:inputType="date" />
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="43dp"
-            android:layout_height="45dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/buttonColor"
-            app:srcCompat="@android:drawable/ic_menu_my_calendar" />
     </LinearLayout>
 
     <Button

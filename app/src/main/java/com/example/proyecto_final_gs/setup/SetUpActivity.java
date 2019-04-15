@@ -1,5 +1,6 @@
 package com.example.proyecto_final_gs.setup;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.setup.fragments.ArtistsSetUpFragment;
 import com.example.proyecto_final_gs.FragmentAdapter;
 import com.example.proyecto_final_gs.setup.fragments.LocationDescriptionSetUpFragment;
@@ -18,22 +20,12 @@ import com.example.proyecto_final_gs.setup.fragments.PersonalSetUpFragment;
 import com.example.proyecto_final_gs.R;
 import com.example.proyecto_final_gs.SettingsActivity;
 import com.example.proyecto_final_gs.Utils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.musyzian.firebase.FirebaseManager;
 
 public class SetUpActivity extends AppCompatActivity implements OnFragmentInteractionListener {
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseManager manager;
 
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference ref = db.getReference("users");
-
-    private FragmentAdapter fragmentAdapter;
-    public ViewPager viewPager;
     Fragment frag1, frag2, frag3, frag4;
 
     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -43,14 +35,30 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up);
 
+        //inicializar firebase manager
+        manager = FirebaseManager.get();
+
         //create fragments
         frag1 = new PersonalSetUpFragment();
         frag2 = new MusicalSetUpFragment();
         frag3 = new ArtistsSetUpFragment();
         frag4 = new LocationDescriptionSetUpFragment();
 
-        //verificar a que fragmento debería ir
-        verifyConf();
+        //verificar si cargar el setup wizard o cargar solo un fragmento estático
+        Intent i = getIntent();
+        String fragment = i.getStringExtra("fragment");
+        if(fragment!=null){
+            if(fragment.equals("personalsetup"))
+                setUpFragment(frag1);
+            if(fragment.equals("musicalsetup"))
+                setUpFragment(frag2);
+            if(fragment.equals("artistssetup"))
+                setUpFragment(frag3);
+            if(fragment.equals("locationdescriptionsetup"))
+                setUpFragment(frag4);
+        }
+        else
+            goToFragment(); //verificar a que fragmento debería ir
     }
 
     // region *Menu Superior*
@@ -65,13 +73,9 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.logout:
-                mAuth.signOut();
+                manager.signOut();
                 Utils.goToActivity(SetUpActivity.this, LoginActivity.class,
                         null, true);
-                break;
-           case R.id.settings:
-                Utils.goToActivity(SetUpActivity.this, SettingsActivity.class,
-                        null, false);
                 break;
         }
         return true;
@@ -99,23 +103,23 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
     }
 
     //metodo que verifica que fragmento cargar inicialmente
-    public void verifyConf(){
-        ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
+    public void goToFragment(){
+        manager.fragmentNavigation(new FirebaseManager.OnFragmentNavigation() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String setupactivity = dataSnapshot.child("setupactivity").getValue(String.class);
-                String musicalsetupactivity = dataSnapshot.child("musicalsetupactivity").getValue(String.class);
-                String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
-                //
-                if(artistssetupactivity!=null){
-                   setUpFragment(frag4);
+            public void onResult(FirebaseManager.NAVIGATION nav) {
+                if(nav.equals(FirebaseManager.NAVIGATION.MainActivity)){
+                    Utils.goToActivity(SetUpActivity.this, MainActivity.class,null, true);
                     return;
                 }
-                if(musicalsetupactivity!=null){
+                if(nav.equals(FirebaseManager.NAVIGATION.LocationDescriptionSetUp)){
+                    setUpFragment(frag4);
+                    return;
+                }
+                if(nav.equals(FirebaseManager.NAVIGATION.ArtistsSetUp)){
                     setUpFragment(frag3);
                     return;
                 }
-                else if(setupactivity!=null) {
+                if(nav.equals(FirebaseManager.NAVIGATION.MusicalSetUp)) {
                     setUpFragment(frag2);
                     return;
                 }
@@ -124,8 +128,11 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
                     return;
                 }
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

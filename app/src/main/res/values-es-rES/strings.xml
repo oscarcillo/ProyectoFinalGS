@@ -41,9 +41,10 @@
     <string name="click_change_image">Haz click sobre la imagen para elegir una</string>
 
     <string name="name">Nombre</string>
-    <string name="birthday">Cumpleaños</string>
-    <string name="continue_">Continuar</string>
+    <string name="birthday">Cumpleaños (DD/MM/AAAA)</string>
+    <string name="continue_">Guardar</string>
 
+    <string name="valid_date">Debes introducir una fecha válida (DD/MM/AAAA)</string>
     <string name="incomplete_data">Tienes que introducir todos los datos</string>
 
     <!-- menu    !-->
@@ -78,14 +79,28 @@
 
     <string name="find_location">Encontrar localización</string>
 
+    <string name="fill_description_location">Tienes que completar toda la informacion</string>
+
     <!-- settings !-->
     <string name="profile_information">Información de Perfil</string>
     <string name="instruments_selection">Selección de instrumentos</string>
     <string name="artist_selection">Selección de artistas</string>
     <string name="location_description">Descripción y Localización</string>
+    <string name="change_password">Cambiar contraseña</string>
     <string name="delete_account">Borrar cuenta</string>
 
     <string name="account_deleted">Cuenta eliminada</string>
 
+    <string name="delete_account_confirmation">Introduce la contraseña para borrar esta cuenta</string>
+    <string name="delete_account_confirmation2">¿Seguro que quieres eliminar esta cuenta?</string>
+
+    <string name="dialog_ok">Vale</string>
+    <string name="dialog_cancel">Cancelar</string>
+
+    <string name="user_not_deleted">No se ha podido eliminar la cuenta</string>
+    <string name="user_deleted">La cuenta ha sido eliminada</string>
+
+    <string name="password_changed">Contraseña cambiada</string>
+    <string name="password_not_changed">Contraseña no cambiada</string>
 
 </resources>

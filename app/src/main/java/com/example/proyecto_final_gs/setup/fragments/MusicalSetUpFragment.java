@@ -1,6 +1,8 @@
 package com.example.proyecto_final_gs.setup.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,26 +15,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.proyecto_final_gs.InstrumentsList;
+import com.example.proyecto_final_gs.SettingsActivity;
+import com.example.proyecto_final_gs.Utils;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
 import com.example.proyecto_final_gs.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.musyzian.firebase.FirebaseManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MusicalSetUpFragment extends Fragment {
 
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-    FirebaseUser user = mAuth.getCurrentUser();
-    DatabaseReference refUsers = db.getReference("users").child(user.getUid()).child("instruments");
-    DatabaseReference refInstruments = db.getReference("instruments");
+    FirebaseManager manager;
 
     //views
     ListView listViewInstruments;
@@ -50,6 +43,9 @@ public class MusicalSetUpFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_musical_set_up, container, false);
 
+        //firebase manager
+        manager = FirebaseManager.get();
+
         //import views
         listViewInstruments = view.findViewById(R.id.listViewInstruments);
         instrumentsButton = view.findViewById(R.id.instrumentsButton);
@@ -63,39 +59,42 @@ public class MusicalSetUpFragment extends Fragment {
         });
 
         //inckuir datos sobre instrumentos en la lista desde Firebase
-        final List<String> instrumentsList = new ArrayList<>();
-        refInstruments.addValueEventListener(new ValueEventListener() {
+        manager.loadInstrumentsList(new FirebaseManager.OnFirebaseLoadInstruments() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                instrumentsList.clear();
-                for(DataSnapshot snapshot: dataSnapshot.getChildren())
-                    instrumentsList.add(snapshot.getValue(String.class));
-                adapter = new InstrumentsList(getActivity(), instrumentsList);
+            public void onResult(List<String> instruments) {
+                adapter = new InstrumentsList(getActivity(), instruments);
                 listViewInstruments.setAdapter(adapter);
+                //ir al final de la lista para cargar todos los instrumentos
+                listViewInstruments.setSelection(adapter.getCount()-1);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        listViewInstruments.setSelection(0);
+                    }
+                }, 50);
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
         return view;
     }
 
     public void uploadChoosenInstrumentsFirebase(View v){
-        choosenInstruments = adapter.getChooseInstruments();
+        choosenInstruments = adapter.getChoosenInstruments();
         if(choosenInstruments.size()==0) {
             Toast.makeText(getActivity(), getText(R.string.musical_setup_choose_instrument), Toast.LENGTH_SHORT).show();
             return;
         }
-        //borrar primero los datos anteriores
-        refUsers.removeValue();
-        //Insertar los nuevos valores
-        for(int i = 0;i<choosenInstruments.size();i++)
-            refUsers.child(""+i).setValue(choosenInstruments.get(i));
-        //subir el dato de la configuracion
-        DatabaseReference ref = db.getReference("users").child(user.getUid()).child("conf").child("musicalsetupactivity");
-        ref.setValue("true");
-        //ir al siguiente fragmento
-        mListener.changeFragment(3);
+        //subir los instrumentos elegidos a firebase
+        manager.uploadInstrumentsData(choosenInstruments);
+
+        //comprobar si debe cambiar de fragmento o volver al menu de opciones
+        Intent i = getActivity().getIntent();
+        String fragment = i.getStringExtra("fragment");
+        if(fragment!=null)
+            Utils.goToActivity(getActivity(), SettingsActivity.class,
+                    null, true);
+        else
+            mListener.changeFragment(3);
     }
 
     // region Fragment changer

@@ -1,41 +1,26 @@
 package com.example.proyecto_final_gs;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.proyecto_final_gs.setup.fragments.ArtistsSetUpFragment;
-import com.example.proyecto_final_gs.setup.fragments.LocationDescriptionSetUpFragment;
-import com.example.proyecto_final_gs.setup.fragments.MusicalSetUpFragment;
-import com.example.proyecto_final_gs.setup.fragments.PersonalSetUpFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.proyecto_final_gs.setup.SetUpActivity;
+import com.musyzian.firebase.FirebaseManager;
 
 public class LoginEmailActivity extends AppCompatActivity {
 
     //variable de autenticacion
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
-
-    FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference ref = db.getReference("users");
+    FirebaseManager manager;
 
     //views
     TextView emailText, passwordText;
     ProgressBar progreso;
+    Button signinButton;
 
     String email, password;
 
@@ -45,11 +30,12 @@ public class LoginEmailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login_email);
 
         //inicializar variables
-        mAuth = FirebaseAuth.getInstance();
+        manager = FirebaseManager.get();
         //
         emailText = findViewById(R.id.emailText);
         passwordText = findViewById(R.id.passwordText);
         progreso = findViewById(R.id.progressBar);
+        signinButton = findViewById(R.id.singinButton);
     }
 
     public void createUserOrLogin(View v){
@@ -78,17 +64,25 @@ public class LoginEmailActivity extends AppCompatActivity {
         }
         //
         progreso.setVisibility(View.VISIBLE);
-        mAuth.signInWithEmailAndPassword(email, password)
-        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        signinButton.setEnabled(false);
+        //
+        manager.signInEmailPassword(email, password, new FirebaseManager.OnFirebaseEventListener() {
             @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
-                    user = mAuth.getCurrentUser();
+            public void onResult(Boolean success) {
+                if (success) {
                     //comprobar si el mail está verificado
-                    if(user.isEmailVerified())
-                        verifyConf();
-                    else{
+                    if(manager.isEmailVerified()) {
+                        manager.isSetUpCompleted(new FirebaseManager.OnFirebaseEventListener() {
+                            @Override
+                            public void onResult(Boolean success) {
+                                if(success)
+                                    Utils.goToActivity(LoginEmailActivity.this, MainActivity.class, null, true);
+                                else
+                                    Utils.goToActivity(LoginEmailActivity.this, SetUpActivity.class,
+                                            null, true);
+                            }
+                        });
+                    }else{
                         Bundle b = new Bundle();
                         b.putString("email", email);
                         b.putString("password", password);
@@ -98,10 +92,10 @@ public class LoginEmailActivity extends AppCompatActivity {
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(LoginEmailActivity.this,
-                            getResources().getString(R.string.error_singin),
-                            Toast.LENGTH_SHORT).show();
+                            getText(R.string.error_singin), Toast.LENGTH_SHORT).show();
                 }
                 progreso.setVisibility(View.INVISIBLE);
+                signinButton.setEnabled(true);
             }
         });
     }
@@ -109,39 +103,5 @@ public class LoginEmailActivity extends AppCompatActivity {
     public void goToRegisterActivity(View v){
             Utils.goToActivity(LoginEmailActivity.this, RegisterActivity.class,
                     null, true);
-    }
-
-    public void verifyConf(){
-        ref.child(mAuth.getCurrentUser().getUid()).child("conf").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String setupactivity = dataSnapshot.child("setupactivity").getValue(String.class);
-                String musicalsetupactivity = dataSnapshot.child("musicalsetupactivity").getValue(String.class);
-                String artistssetupactivity = dataSnapshot.child("artistssetupactivity").getValue(String.class);
-                //
-                if(artistssetupactivity!=null){
-                    Utils.goToActivity(LoginEmailActivity.this, LocationDescriptionSetUpFragment.class,
-                            null, true);
-                    return;
-                }
-                if(musicalsetupactivity!=null){
-                    Utils.goToActivity(LoginEmailActivity.this, ArtistsSetUpFragment.class,
-                            null, true);
-                    return;
-                }
-                else if(setupactivity!=null) {
-                    Utils.goToActivity(LoginEmailActivity.this, MusicalSetUpFragment.class,
-                            null, true);
-                    return;
-                }
-                else{
-                    Bundle b = new Bundle();
-                    b.putString("name", mAuth.getCurrentUser().getEmail());
-                    Utils.goToActivity(LoginEmailActivity.this, PersonalSetUpFragment.class,b, true);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
     }
 }
