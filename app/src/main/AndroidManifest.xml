@@ -19,13 +19,14 @@
         <activity android:name=".setup.SetUpActivity"
             android:windowSoftInputMode="adjustPan"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" ></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <activity android:name=".SettingsActivity" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".EmailVerificationActivity"
             android:configChanges="orientation"

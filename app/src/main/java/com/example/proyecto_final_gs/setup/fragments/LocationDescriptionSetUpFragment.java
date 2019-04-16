@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.R;
-import com.example.proyecto_final_gs.SettingsActivity;
 import com.example.proyecto_final_gs.Utils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -116,10 +115,6 @@ public class LocationDescriptionSetUpFragment extends Fragment {
                     //comprobar si debe cambiar de fragmento o volver al menu de opciones
                     Intent i = getActivity().getIntent();
                     String fragment = i.getStringExtra("fragment");
-                    if(fragment!=null)
-                        Utils.goToActivity(getActivity(), SettingsActivity.class,
-                                null, true);
-                    else
                         Utils.goToActivity(getActivity(), MainActivity.class,
                                 null, true);
                 }

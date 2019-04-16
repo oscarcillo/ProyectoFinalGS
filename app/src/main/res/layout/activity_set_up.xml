@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:context=".setup.SetUpActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarSetup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme" />
+
     <FrameLayout
         android:id="@+id/frameLayoutFragments"
         android:layout_width="wrap_content"

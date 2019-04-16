@@ -98,6 +98,7 @@
 
     <string name="dialog_ok">Ok</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_signout_confirmation">Are you sure you want to sign-out?</string>
 
     <string name="user_not_deleted">The account couldn\'t be deleted</string>
     <string name="user_deleted">The account has been deleted</string>

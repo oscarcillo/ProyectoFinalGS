@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.proyecto_final_gs.SettingsActivity;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.Utils;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
 import com.example.proyecto_final_gs.R;
@@ -30,11 +30,8 @@ import com.google.android.gms.tasks.Task;
 import com.musyzian.firebase.FirebaseManager;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Date;
 
 public class PersonalSetUpFragment extends Fragment {
@@ -93,7 +90,9 @@ public class PersonalSetUpFragment extends Fragment {
                 photoUrl = url;
                 //cargar la imagen de perfil
                 if(photoUrl!=null)
-                    Glide.with(getActivity()).load(photoUrl).into(profileImageView);
+                    Glide.with(getActivity())
+                            .load(photoUrl)
+                            .apply(RequestOptions.circleCropTransform()).into(profileImageView);
                 imageProgressBar.setVisibility(View.INVISIBLE);
             }
         });
@@ -144,7 +143,7 @@ public class PersonalSetUpFragment extends Fragment {
             Intent i = getActivity().getIntent();
             String fragment = i.getStringExtra("fragment");
             if(fragment!=null)
-                Utils.goToActivity(getActivity(), SettingsActivity.class,
+                Utils.goToActivity(getActivity(), MainActivity.class,
                         null, true);
             else
                 mListener.changeFragment(2);
@@ -174,7 +173,9 @@ public class PersonalSetUpFragment extends Fragment {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(),
                         photoUrl);
-                profileImageView.setImageBitmap(bitmap);
+                Glide.with(getActivity())
+                        .load(bitmap)
+                        .apply(RequestOptions.circleCropTransform()).into(profileImageView);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,24 +1,22 @@
 package com.example.proyecto_final_gs.setup;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.setup.fragments.ArtistsSetUpFragment;
-import com.example.proyecto_final_gs.FragmentAdapter;
 import com.example.proyecto_final_gs.setup.fragments.LocationDescriptionSetUpFragment;
 import com.example.proyecto_final_gs.LoginActivity;
 import com.example.proyecto_final_gs.setup.fragments.MusicalSetUpFragment;
 import com.example.proyecto_final_gs.setup.fragments.PersonalSetUpFragment;
 import com.example.proyecto_final_gs.R;
-import com.example.proyecto_final_gs.SettingsActivity;
 import com.example.proyecto_final_gs.Utils;
 import com.musyzian.firebase.FirebaseManager;
 
@@ -44,6 +42,34 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
         frag3 = new ArtistsSetUpFragment();
         frag4 = new LocationDescriptionSetUpFragment();
 
+        //inicializar drawer y toolbar
+        Toolbar toolbar = findViewById(R.id.toolbarSetup);
+        toolbar.inflateMenu(R.menu.menu);
+        toolbar.setTitle(R.string.app_name);
+
+        //region listener que da funcionalidad al menu
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(SetUpActivity.this);
+
+                builder.setMessage(getText(R.string.dialog_signout_confirmation));
+
+                builder.setPositiveButton(getText(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        manager.signOut();
+                        Utils.goToActivity(SetUpActivity.this, LoginActivity.class,
+                                null, true);
+                    }
+                });
+                builder.setNegativeButton(getText(R.string.dialog_cancel), null);
+                builder.show();
+                return true;
+            }
+        });
+        //endregion
+
         //verificar si cargar el setup wizard o cargar solo un fragmento estático
         Intent i = getIntent();
         String fragment = i.getStringExtra("fragment");
@@ -60,27 +86,6 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
         else
             goToFragment(); //verificar a que fragmento debería ir
     }
-
-    // region *Menu Superior*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the main_menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.logout:
-                manager.signOut();
-                Utils.goToActivity(SetUpActivity.this, LoginActivity.class,
-                        null, true);
-                break;
-        }
-        return true;
-    }
-    // endregion
 
     public void setUpFragment(Fragment fragment){
         final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

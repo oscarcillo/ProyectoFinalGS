@@ -96,6 +96,7 @@
 
     <string name="dialog_ok">Vale</string>
     <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_signout_confirmation">¿Estás seguro de que quieres cerrar la sesión?</string>
 
     <string name="user_not_deleted">No se ha podido eliminar la cuenta</string>
     <string name="user_deleted">La cuenta ha sido eliminada</string>

@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.proyecto_final_gs.InstrumentsList;
-import com.example.proyecto_final_gs.SettingsActivity;
+import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.Utils;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
 import com.example.proyecto_final_gs.R;
@@ -91,7 +91,7 @@ public class MusicalSetUpFragment extends Fragment {
         Intent i = getActivity().getIntent();
         String fragment = i.getStringExtra("fragment");
         if(fragment!=null)
-            Utils.goToActivity(getActivity(), SettingsActivity.class,
+            Utils.goToActivity(getActivity(), MainActivity.class,
                     null, true);
         else
             mListener.changeFragment(3);
