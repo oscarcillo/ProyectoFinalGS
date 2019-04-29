@@ -6,27 +6,33 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.proyecto_final_gs.adapters.UserListAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
+import com.musyzian.firebase.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
     //views
     Toolbar toolbar;
+
+    //user list
+    RecyclerView recyclerView;
+    UserListAdapter adapter;
+    List<User> userList;
 
     boolean isGoogleAccount = false;
 
@@ -60,20 +71,27 @@ public class MainActivity extends AppCompatActivity {
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                switch(menuItem.getItemId()){
+                    case R.id.logoutButton:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
-                builder.setMessage(getText(R.string.dialog_signout_confirmation));
+                        builder.setMessage(getText(R.string.dialog_signout_confirmation));
 
-                builder.setPositiveButton(getText(R.string.dialog_ok), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        manager.signOut();
-                        Utils.goToActivity(MainActivity.this, LoginActivity.class,
-                                null, true);
-                    }
-                });
-                builder.setNegativeButton(getText(R.string.dialog_cancel), null);
-                builder.show();
+                        builder.setPositiveButton(getText(R.string.dialog_ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                manager.signOut();
+                                Utils.goToActivity(MainActivity.this, LoginActivity.class,
+                                        null, true);
+                            }
+                        });
+                        builder.setNegativeButton(getText(R.string.dialog_cancel), null);
+                        builder.show();
+                        break;
+
+                    case R.id.filterButton:
+                        break;
+                }
                 return true;
             }
         });
@@ -140,6 +158,23 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 return true;
+            }
+        });
+
+        //construir la lista de usuarios
+        userList = new ArrayList<>();
+
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        manager.loadUsersList(new FirebaseManager.OnFirebaseLoadUsers() {
+            @Override
+            public void onResult(List<User> users) {
+                userList = users;
+                //cargar la lista de usuarios en el recyclerview
+                adapter = new UserListAdapter(getApplication(), userList);
+                recyclerView.setAdapter(adapter);
             }
         });
     }
@@ -247,6 +282,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //cargar imagen de perfil
+        final ProgressBar progreso = headerView.findViewById(R.id.progressBarNav);
+        progreso.setVisibility(View.VISIBLE);
         final ImageView profilePhoto = headerView.findViewById(R.id.profilePhoto);
         manager.getUrlPhoto(new FirebaseManager.OnFirebaseLoadImage() {
             @Override
@@ -255,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
                         .load(url)
                         .apply(RequestOptions.circleCropTransform()).into(profilePhoto);
                 profilePhoto.getLayoutParams().height = 250;
+                progreso.setVisibility(View.INVISIBLE);
             }
         });
 

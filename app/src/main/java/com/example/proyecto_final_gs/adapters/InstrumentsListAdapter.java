@@ -1,4 +1,4 @@
-package com.example.proyecto_final_gs;
+package com.example.proyecto_final_gs.adapters;
 
 import android.app.Activity;
 import android.util.Log;
@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.example.proyecto_final_gs.R;
 import com.musyzian.firebase.FirebaseManager;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class InstrumentsList extends ArrayAdapter<String> {
+public class InstrumentsListAdapter extends ArrayAdapter<String> {
 
     FirebaseManager manager = FirebaseManager.get();
 
@@ -28,7 +29,7 @@ public class InstrumentsList extends ArrayAdapter<String> {
 
     private boolean[] selectedItems;
 
-    public InstrumentsList(Activity context, List<String> instrumentsList){
+    public InstrumentsListAdapter(Activity context, List<String> instrumentsList){
         super(context, R.layout.layout_instruments_list, instrumentsList);
         this.context = context;
         this.instrumentsList = instrumentsList;

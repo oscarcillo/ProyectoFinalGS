@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.proyecto_final_gs.InstrumentsList;
+import com.example.proyecto_final_gs.adapters.InstrumentsListAdapter;
 import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.Utils;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
@@ -33,7 +33,7 @@ public class MusicalSetUpFragment extends Fragment {
 
     //variables
     List<String> choosenInstruments;
-    InstrumentsList adapter;
+    InstrumentsListAdapter adapter;
 
     //fragment listener
     private OnFragmentInteractionListener mListener;
@@ -62,7 +62,7 @@ public class MusicalSetUpFragment extends Fragment {
         manager.loadInstrumentsList(new FirebaseManager.OnFirebaseLoadInstruments() {
             @Override
             public void onResult(List<String> instruments) {
-                adapter = new InstrumentsList(getActivity(), instruments);
+                adapter = new InstrumentsListAdapter(getActivity(), instruments);
                 listViewInstruments.setAdapter(adapter);
                 //ir al final de la lista para cargar todos los instrumentos
                 listViewInstruments.setSelection(adapter.getCount()-1);

@@ -2,6 +2,7 @@ package com.musyzian.firebase;
 
 import android.location.Location;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -526,6 +529,59 @@ public class FirebaseManager {
     }
 
     /**
+     * Método que carga la lista con todos los usuarios de la aplicación
+     * @param callback
+     */
+    public void loadUsersList(final OnFirebaseLoadUsers callback){
+        final List<User> users = new ArrayList<>();
+
+        user = mAuth.getCurrentUser();
+
+        usersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    //comprobar que la configuracion de usuario esta completada
+                    if(snapshot.child("conf").child("locationdescriptionactivity").getValue(String.class)!=null
+                    && !snapshot.getKey().equals(user.getUid())) {
+                        //crear listas
+                        List<String> instruments = new ArrayList<>();
+                        List<String> artists = new ArrayList<>();
+
+                        //cargar datos a la lista de usuarios
+                        String photoUrl = snapshot.child("photoUrl").getValue(String.class);
+                        String name = snapshot.child("name").getValue(String.class);
+                        //calcular edad
+                        String age = snapshot.child("birthday").getValue(String.class);
+                        age = age.substring(age.length() - 4);
+                        int year = Calendar.getInstance().get(Calendar.YEAR);
+                        year = year - Integer.parseInt(age);
+                        age = year+"";
+                        //
+                        String city = snapshot.child("cityName").getValue(String.class);
+
+                        //cargar lista de instrumentos
+                        for(int i = 0; i < snapshot.child("instruments").getChildrenCount(); i++){
+                            instruments.add(snapshot.child("instruments").child(i+"").getValue(String.class));
+                        }
+                        //cargar lista de artistas
+                        for(DataSnapshot dataSnapshot1 : snapshot.child("artists").getChildren()){
+                            artists.add(dataSnapshot1.getValue(String.class));
+                        }
+
+                        //crear la lista de usuarios
+                        users.add(new User(Uri.parse(photoUrl), name, age, city, instruments, artists));
+                    }
+                }
+                //devolver la lista de usuarios con el listener
+                callback.onResult(users);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    /**
      * Método que sube al almacenamiento de Firebase la imagen de perfil de usuario
      * @param url Nombre de la imagen
      * @param photoUrl Uri donde se guardará la imagen, en este caso será el Storage de Firebase
@@ -594,6 +650,10 @@ public class FirebaseManager {
 
     public interface OnFirebaseLoadLocation {
         void onResult(Location loc);
+    }
+
+    public interface OnFirebaseLoadUsers {
+        void onResult(List<User> users);
     }
     //endregion
 

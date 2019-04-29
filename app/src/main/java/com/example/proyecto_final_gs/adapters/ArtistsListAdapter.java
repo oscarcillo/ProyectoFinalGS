@@ -1,4 +1,4 @@
-package com.example.proyecto_final_gs;
+package com.example.proyecto_final_gs.adapters;
 
 import android.app.Activity;
 import android.media.Image;
@@ -15,11 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.proyecto_final_gs.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArtistsList extends ArrayAdapter<String> {
+public class ArtistsListAdapter extends ArrayAdapter<String> {
 
     private Activity context;
     private List<String> artistsList;
@@ -27,7 +28,7 @@ public class ArtistsList extends ArrayAdapter<String> {
     private List<String> enabled;
     private ImageView checkImage;
 
-    public ArtistsList(Activity context, List<String> artistsList, List<String> imageList, List<String> enabled){
+    public ArtistsListAdapter(Activity context, List<String> artistsList, List<String> imageList, List<String> enabled){
         super(context, R.layout.layout_artists_list, artistsList);
         this.context = context;
         this.artistsList = artistsList;

@@ -40,7 +40,6 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResult(Boolean success) {
                         if(success)
-                        if(success)
                             Utils.goToActivity(LoginActivity.this, MainActivity.class,
                                     null, true);
                         else

@@ -19,7 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.proyecto_final_gs.ArtistsList;
+import com.example.proyecto_final_gs.adapters.ArtistsListAdapter;
 import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.Utils;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
@@ -134,7 +134,7 @@ public class ArtistsSetUpFragment extends Fragment {
                                 enabled.add("false");
                             }
                             //crear la lista
-                            final ArtistsList adapter = new ArtistsList(getActivity(), lista, listaImages, enabled);
+                            final ArtistsListAdapter adapter = new ArtistsListAdapter(getActivity(), lista, listaImages, enabled);
                             listViewArtists.setAdapter(adapter);
 
                             ////////////////////////

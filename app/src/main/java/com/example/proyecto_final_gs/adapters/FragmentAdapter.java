@@ -1,4 +1,4 @@
-package com.example.proyecto_final_gs;
+package com.example.proyecto_final_gs.adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
