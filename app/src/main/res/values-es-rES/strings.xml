@@ -83,6 +83,7 @@
     <string name="fill_description_location">Tienes que completar toda la informacion</string>
 
     <!-- settings !-->
+    <string name="chats">Chats</string>
     <string name="profile_information">Información de Perfil</string>
     <string name="instruments_selection">Selección de instrumentos</string>
     <string name="artist_selection">Selección de artistas</string>

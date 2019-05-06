@@ -324,4 +324,8 @@ public class UserActivity extends AppCompatActivity {
         else
             super.onBackPressed();
     }
+
+    public void onClickButton(View v){
+        Utils.goToActivity(this, ChatActivity.class, null, true);
+    }
 }

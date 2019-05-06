@@ -193,6 +193,7 @@
                     android:layout_width="109dp"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/buttonColor"
+                    android:onClick="onClickButton"
                     android:text="@string/chat"
                     android:textColor="@color/common_google_signin_btn_text_dark_default" />
 
