@@ -50,6 +50,7 @@
                         android:layout_weight="1"
                         android:text="TextView"
                         android:textAlignment="center"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="22sp"
                         android:textStyle="bold" />
 
@@ -60,6 +61,7 @@
                         android:layout_weight="1"
                         android:text="TextView"
                         android:textAlignment="center"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="16sp" />
 
                     <TextView
@@ -69,6 +71,17 @@
                         android:layout_weight="1"
                         android:text="TextView"
                         android:textAlignment="center"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/textDistance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:textAlignment="center"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -90,6 +103,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/user_plays"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -99,6 +113,7 @@
                         android:layout_height="wrap_content"
                         android:maxWidth="150dp"
                         android:text="TextView"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -119,6 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="@string/user_listens"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -128,6 +144,7 @@
                         android:layout_height="wrap_content"
                         android:maxWidth="150dp"
                         android:text="TextView"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
                         android:textSize="16sp" />
 
                 </LinearLayout>

@@ -109,6 +109,10 @@
     <string name="user_plays">Toca:</string>
     <string name="user_listens">Escucha:</string>
 
-    <string name="contact_user">Contactar</string>
+    <string name="contact_user">Ver usuario</string>
+
+    <string name="years_old">años</string>
+
+    <string name="chat">Chat</string>
 
 </resources>

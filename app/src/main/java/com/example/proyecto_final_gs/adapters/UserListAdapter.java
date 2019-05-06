@@ -1,6 +1,7 @@
 package com.example.proyecto_final_gs.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.proyecto_final_gs.R;
+import com.example.proyecto_final_gs.UserActivity;
+import com.example.proyecto_final_gs.Utils;
 import com.musyzian.firebase.User;
 
 import java.util.List;
@@ -21,10 +24,12 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
 
     private Context mCtx;
     private List<User> userList;
+    private UserListListener listener;
 
-    public UserListAdapter(Context mCtx, List<User> userList) {
+    public UserListAdapter(Context mCtx, List<User> userList, UserListListener listener) {
         this.mCtx = mCtx;
         this.userList = userList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -37,7 +42,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder userViewHolder, int i) {
-        User user = userList.get(i);
+        final User user = userList.get(i);
 
         //cargar imagen con glide
         Glide.with(mCtx)
@@ -48,6 +53,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
         userViewHolder.textViewName.setText(user.getName());
         userViewHolder.textViewAge.setText(user.getAge() + " years old");
         userViewHolder.textViewCity.setText(user.getCity());
+        if(Float.parseFloat(String.format("%.0f",user.getDistance()/1000))<1)
+            userViewHolder.textDistance.setText("1 km" );
+        else
+            userViewHolder.textDistance.setText(String.format("%.0f",user.getDistance()/1000) + " km" );
 
         String instruments = "";
         for(int it = 0; it < 3; it++){
@@ -66,6 +75,14 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
                 artists = artists + "...";
         }
         userViewHolder.textViewArtists.setText(artists);
+
+        //listener para el boton de las tarjetas de usuario
+        userViewHolder.contactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(user);
+            }
+        });
     }
 
     @Override
@@ -76,7 +93,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
     class UserViewHolder extends RecyclerView.ViewHolder{
 
         ImageView imageView;
-        TextView textViewName, textViewAge, textViewCity, textViewInstruments, textViewArtists;
+        TextView textViewName, textViewAge, textViewCity, textDistance, textViewInstruments, textViewArtists;
         Button contactButton;
 
         public UserViewHolder(@NonNull View itemView) {
@@ -86,10 +103,15 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
             textViewName = itemView.findViewById(R.id.textUsername);
             textViewAge = itemView.findViewById(R.id.textAge);
             textViewCity = itemView.findViewById(R.id.textCity);
+            textDistance = itemView.findViewById(R.id.textDistance);
             textViewInstruments = itemView.findViewById(R.id.textInstruments);
             textViewArtists = itemView.findViewById(R.id.textArtists);
             contactButton = itemView.findViewById(R.id.contactUserButton);
         }
+    }
+
+    public interface UserListListener{
+        void onClick(User user);
     }
 
 }

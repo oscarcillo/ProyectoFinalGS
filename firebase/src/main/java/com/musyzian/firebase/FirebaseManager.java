@@ -537,47 +537,66 @@ public class FirebaseManager {
 
         user = mAuth.getCurrentUser();
 
-        usersRef.addValueEventListener(new ValueEventListener() {
+        //coger la localizacion del usuario con la sesion iniciada
+        getLocation(new OnFirebaseLoadLocation() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    //comprobar que la configuracion de usuario esta completada
-                    if(snapshot.child("conf").child("locationdescriptionactivity").getValue(String.class)!=null
-                    && !snapshot.getKey().equals(user.getUid())) {
-                        //crear listas
-                        List<String> instruments = new ArrayList<>();
-                        List<String> artists = new ArrayList<>();
+            public void onResult(Location loc) {
+                //coger la localizacion del usuario que tiene la sesion iniciada
+                final Location locCurrentUser = loc;
 
-                        //cargar datos a la lista de usuarios
-                        String photoUrl = snapshot.child("photoUrl").getValue(String.class);
-                        String name = snapshot.child("name").getValue(String.class);
-                        //calcular edad
-                        String age = snapshot.child("birthday").getValue(String.class);
-                        age = age.substring(age.length() - 4);
-                        int year = Calendar.getInstance().get(Calendar.YEAR);
-                        year = year - Integer.parseInt(age);
-                        age = year+"";
-                        //
-                        String city = snapshot.child("cityName").getValue(String.class);
+                //cargar todos los datos de los usuarios
+                usersRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean isLoaded = false;
+                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                            //comprobar que la configuracion de usuario esta completada
+                            if(snapshot.child("conf").child("locationdescriptionactivity").getValue(String.class)!=null
+                                    && !snapshot.getKey().equals(user.getUid())) {
+                                //crear listas
+                                List<String> instruments = new ArrayList<>();
+                                List<String> artists = new ArrayList<>();
 
-                        //cargar lista de instrumentos
-                        for(int i = 0; i < snapshot.child("instruments").getChildrenCount(); i++){
-                            instruments.add(snapshot.child("instruments").child(i+"").getValue(String.class));
+                                //cargar datos a la lista de usuarios
+                                String photoUrl = snapshot.child("photoUrl").getValue(String.class);
+                                String name = snapshot.child("name").getValue(String.class);
+                                //calcular edad
+                                String age = snapshot.child("birthday").getValue(String.class);
+                                age = age.substring(age.length() - 4);
+                                int year = Calendar.getInstance().get(Calendar.YEAR);
+                                year = year - Integer.parseInt(age);
+                                age = year+"";
+                                //
+                                String city = snapshot.child("cityName").getValue(String.class);
+
+                                //cargar lista de instrumentos
+                                for(int i = 0; i < snapshot.child("instruments").getChildrenCount(); i++){
+                                    instruments.add(snapshot.child("instruments").child(i+"").getValue(String.class));
+                                }
+                                //cargar lista de artistas
+                                for(DataSnapshot dataSnapshot1 : snapshot.child("artists").getChildren()){
+                                    artists.add(dataSnapshot1.getValue(String.class));
+                                }
+
+                                //cargar localizacion
+                                Location location = new Location("");
+                                location.setLatitude(Double.parseDouble(snapshot.child("location").child("latitude").getValue(String.class)));
+                                location.setLongitude(Double.parseDouble(snapshot.child("location").child("longitude").getValue(String.class)));
+
+                                //calcular distancia entre usuarios
+                                Float distance = locCurrentUser.distanceTo(location);
+
+                                //crear la lista de usuarios
+                                users.add(new User(Uri.parse(photoUrl), name, age, city, instruments, artists, location, distance, snapshot.getKey()));
+                            }
                         }
-                        //cargar lista de artistas
-                        for(DataSnapshot dataSnapshot1 : snapshot.child("artists").getChildren()){
-                            artists.add(dataSnapshot1.getValue(String.class));
-                        }
-
-                        //crear la lista de usuarios
-                        users.add(new User(Uri.parse(photoUrl), name, age, city, instruments, artists));
+                        //devolver la lista de usuarios con el listener
+                        callback.onResult(users);
                     }
-                }
-                //devolver la lista de usuarios con el listener
-                callback.onResult(users);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {}
+                });
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
         });
     }
 

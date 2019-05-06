@@ -111,7 +111,11 @@
     <string name="user_plays">Plays:</string>
     <string name="user_listens">Listens:</string>
 
-    <string name="contact_user">Contact user</string>
+    <string name="contact_user">View user</string>
+
+    <string name="years_old">years old</string>
+
+    <string name="chat">Chat</string>
 
 
 </resources>

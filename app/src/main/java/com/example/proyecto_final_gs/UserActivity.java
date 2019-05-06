@@ -10,8 +10,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
@@ -27,41 +25,31 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.proyecto_final_gs.adapters.UserListAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
 import com.musyzian.firebase.User;
 
-import java.util.ArrayList;
-import java.util.List;
+public class UserActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity {
-
-    FirebaseManager manager;
+    FirebaseManager manager = FirebaseManager.get();
 
     //drawer layout
     DrawerLayout drawer;
 
-    //bundle
-    Bundle b = new Bundle();
-
     //views
     Toolbar toolbar;
 
-    //user list
-    RecyclerView recyclerView;
-    UserListAdapter adapter;
-    List<User> userList;
+    //bundle
+    Bundle b = new Bundle();
 
     boolean isGoogleAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_user);
 
-        //iniciar firebase
-        manager = FirebaseManager.get();
+        loadUserData();
 
         //inicializar drawer y toolbar
         drawer = findViewById(R.id.drawerLayout);
@@ -74,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch(menuItem.getItemId()){
                     case R.id.logoutButton:
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UserActivity.this);
 
                         builder.setMessage(getText(R.string.dialog_signout_confirmation));
 
@@ -82,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 manager.signOut();
-                                Utils.goToActivity(MainActivity.this, LoginActivity.class,
+                                Utils.goToActivity(UserActivity.this, LoginActivity.class,
                                         null, true);
                             }
                         });
@@ -161,30 +149,43 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
 
-        //construir la lista de usuarios
-        userList = new ArrayList<>();
+    public void loadUserData(){
+        User user = getIntent().getParcelableExtra("user");
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ImageView profileImageList = findViewById(R.id.profileImageList);
+        TextView textUsername = findViewById(R.id.textUsername);
+        TextView textAge = findViewById(R.id.textAge);
+        TextView textCity = findViewById(R.id.textCity);
+        TextView textDistance = findViewById(R.id.textDistance);
+        TextView textInstruments = findViewById(R.id.textInstruments);
+        TextView textArtists = findViewById(R.id.textArtists);
 
-        manager.loadUsersList(new FirebaseManager.OnFirebaseLoadUsers() {
-            @Override
-            public void onResult(List<User> users) {
-                userList = users;
-                //cargar la lista de usuarios en el recyclerview
-                adapter = new UserListAdapter(getApplication(), userList, new UserListAdapter.UserListListener() {
-                    @Override
-                    public void onClick(User user) {
-                        Bundle b = new Bundle();
-                        b.putParcelable("user", user);
-                        Utils.goToActivity(MainActivity.this, UserActivity.class, b, false);
-                    }
-                });
-                recyclerView.setAdapter(adapter);
-            }
-        });
+        //
+        Glide.with(this)
+                .load(user.getProfileImageUrl())
+                .apply(RequestOptions.circleCropTransform()).into(profileImageList);
+        textUsername.setText(user.getName());
+        textAge.setText(user.getAge() + " " + getText(R.string.years_old));
+        textCity.setText(user.getCity());
+        if(Float.parseFloat(String.format("%.0f",user.getDistance()/1000))<1)
+            textDistance.setText("1 km" );
+        else
+            textDistance.setText(String.format("%.0f",user.getDistance()/1000) + " km" );
+
+        //cargar las listas de instrumentos y artistas
+        String instruments = "";
+        for(int i = 0; i < user.getInstruments().size(); i++)
+                instruments = instruments + "- " + user.getInstruments().get(i) + "\r\n";
+        textInstruments.setText(instruments);
+
+        String artists = "";
+        for(int i = 0; i < user.getArtists().size(); i++)
+            artists = artists + "- " + user.getArtists().get(i) + "\r\n";
+        textArtists.setText(artists);
+
+        Log.e("userid", ""+user.getId());
     }
 
     //metodo para borrar la cuenta de usuario
@@ -212,10 +213,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onResult(Boolean success) {
                         manager.signOut();
                         if(success) {
-                            Toast.makeText(MainActivity.this,
+                            Toast.makeText(UserActivity.this,
                                     getText(R.string.user_deleted),
                                     Toast.LENGTH_SHORT).show();
-                            Utils.goToActivity(MainActivity.this, LoginActivity.class, null, true);
+                            Utils.goToActivity(UserActivity.this, LoginActivity.class, null, true);
                         } else
                             Toast.makeText(getApplicationContext(),
                                     getText(R.string.user_not_deleted),
@@ -262,10 +263,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onResult(Boolean success) {
                                 if(success)
-                                    Toast.makeText(MainActivity.this,
+                                    Toast.makeText(UserActivity.this,
                                             getText(R.string.password_changed), Toast.LENGTH_SHORT).show();
                                 else
-                                    Toast.makeText(MainActivity.this,
+                                    Toast.makeText(UserActivity.this,
                                             getText(R.string.password_not_changed), Toast.LENGTH_SHORT).show();
                             }
                         });
