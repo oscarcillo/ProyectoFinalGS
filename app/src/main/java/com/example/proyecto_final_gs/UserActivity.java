@@ -54,7 +54,7 @@ public class UserActivity extends AppCompatActivity {
         //inicializar drawer y toolbar
         drawer = findViewById(R.id.drawerLayout);
         toolbar = findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu);
+        toolbar.inflateMenu(R.menu.menu_without_filter);
 
         //region listener que da funcionalidad al menu
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

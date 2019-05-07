@@ -14,9 +14,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.proyecto_final_gs.adapters.InstrumentsListAdapter;
+import com.example.proyecto_final_gs.adapters.ChatListAdapter;
 import com.example.proyecto_final_gs.MainActivity;
 import com.example.proyecto_final_gs.Utils;
+import com.example.proyecto_final_gs.adapters.InstrumentsListAdapter;
 import com.example.proyecto_final_gs.setup.OnFragmentInteractionListener;
 import com.example.proyecto_final_gs.R;
 import com.musyzian.firebase.FirebaseManager;

@@ -680,6 +680,56 @@ public class FirebaseManager {
         });
     }
 
+    /**
+     * Metodo para cargar la lista de chats de un usuario
+     * @param callback
+     */
+    public void loadChatList(final OnFirebaseLoadChatList callback){
+
+        final List<String> urls = new ArrayList<>();
+        final List<String> username = new ArrayList<>();
+        final List<String> lastMessage = new ArrayList<>();
+
+        usersRef.child(mAuth.getUid()).child("chats").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    String uid = snapshot.getKey();
+                    final String chatId = snapshot.getValue(String.class);
+
+                    //comprobar el nombre de usuario a partir del id de usuario
+                    usersRef.child(uid).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            username.add(dataSnapshot.child("name").getValue(String.class));
+                            urls.add(dataSnapshot.child("photoUrl").getValue(String.class));
+
+                            //buscar ultima conversacion
+                            chatsRef.child(chatId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String last = "";
+                                    for(DataSnapshot snapshot1 : dataSnapshot.getChildren()){
+                                        last = snapshot1.getValue(String.class);
+                                    }
+                                    lastMessage.add(last);
+                                    callback.onResult(urls, username, lastMessage);
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) { }
+                            });
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) { }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
     //region *INTERFACES*
     public interface OnFirebaseEventListener{
         void onResult(Boolean success);
@@ -711,6 +761,10 @@ public class FirebaseManager {
 
     public interface OnFirebaseLoadUsers {
         void onResult(List<User> users);
+    }
+
+    public interface OnFirebaseLoadChatList {
+        void onResult(List<String> urls, List<String> username, List<String> lastMessage);
     }
     //endregion
 
