@@ -118,6 +118,10 @@ public class UserActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch(menuItem.getItemId()){
+                    case R.id.nav_chats:
+                        Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_profile_information:
                         menuItem.setChecked(false);
                         b.putString("fragment", "personalsetup");
@@ -326,6 +330,8 @@ public class UserActivity extends AppCompatActivity {
     }
 
     public void onClickButton(View v){
-        Utils.goToActivity(this, ChatActivity.class, null, true);
+        Bundle b = new Bundle();
+        b.putParcelable("user", getIntent().getParcelableExtra("user"));
+        Utils.goToActivity(this, ChatActivity.class, b, true);
     }
 }

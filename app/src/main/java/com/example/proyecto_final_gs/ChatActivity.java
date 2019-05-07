@@ -1,6 +1,7 @@
 package com.example.proyecto_final_gs;
 
 import android.content.DialogInterface;
+import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -49,10 +50,20 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        loadUserData();
+
+        //listener para el boton de enviar mensaje
+        findViewById(R.id.chatSendButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage();
+            }
+        });
+
         //inicializar drawer y toolbar
         drawer = findViewById(R.id.drawerLayout);
         toolbar = findViewById(R.id.toolbar);
-        toolbar.inflateMenu(R.menu.menu);
+        toolbar.inflateMenu(R.menu.menu_without_filter);
 
         //region listener que da funcionalidad al menu
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -116,6 +127,10 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch(menuItem.getItemId()){
+                    case R.id.nav_chats:
+                        Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_profile_information:
                         menuItem.setChecked(false);
                         b.putString("fragment", "personalsetup");
@@ -147,6 +162,44 @@ public class ChatActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+
+    }
+
+    public void sendMessage(){
+        User user = getIntent().getParcelableExtra("user");
+
+        EditText chatWriteText = findViewById(R.id.chatWriteText);
+
+        manager.sendChatMessage(manager.getUserId(), user.getId(), chatWriteText.getText().toString());
+
+        chatWriteText.setText("");
+    }
+
+    //metodo que carga toda la informacion del usuario en esta actividad
+    public void loadUserData(){
+        User user = getIntent().getParcelableExtra("user");
+
+        ImageView image = findViewById(R.id.toolbarPhotoImage);
+        TextView text = findViewById(R.id.toolbarNameText);
+
+        Utils.loadImageWithGlideSize(this, user.getProfileImageUrl(), image, 100, 100);
+        text.setText(user.getName());
+
+        //listener para la imagen de perfil del chat
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProfileImageClick();
+            }
+        });
+    }
+
+    //metodo que lleva al perfil del usuario del chat
+    public void onProfileImageClick(){
+        Bundle b = new Bundle();
+        b.putParcelable("user", getIntent().getParcelableExtra("user"));
+        Utils.goToActivity(ChatActivity.this, UserActivity.class, b, false);
     }
 
     //metodo para borrar la cuenta de usuario
@@ -286,7 +339,4 @@ public class ChatActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
-    public void onClickButton(View v){
-        Utils.goToActivity(this, ChatActivity.class, null, true);
-    }
 }

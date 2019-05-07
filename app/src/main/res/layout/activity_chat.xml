@@ -12,6 +12,7 @@
     android:layout_gravity="left">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/login_background"
@@ -24,18 +25,75 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme" />
+            android:theme="?attr/actionBarTheme" >
+
+            <ImageView
+                android:id="@+id/toolbarPhotoImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal"
+                android:layout_marginRight="11dp"/>
+
+            <TextView
+                android:id="@+id/toolbarNameText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/common_google_signin_btn_text_dark_default"
+                android:textSize="24dp" />
+
+        </android.support.v7.widget.Toolbar>
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/relativelayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal|top"
-                android:orientation="vertical"/>
+                android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toTopOf="@+id/chat_footer"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/chat_footer"
+                    android:layout_width="414dp"
+                    android:layout_height="54dp"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <EditText
+                        android:id="@+id/chatWriteText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                        android:textColorHighlight="@color/buttonColor"
+                        android:textColorLink="@color/buttonColor"
+                        android:textCursorDrawable="@color/buttonColor" />
+
+                    <ImageButton
+                        android:id="@+id/chatSendButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/colorPrimary"
+                        app:srcCompat="@android:drawable/ic_menu_send" />
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
 
         </FrameLayout>
 

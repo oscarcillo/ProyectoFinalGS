@@ -52,6 +52,7 @@ public class FirebaseManager {
 
     private DatabaseReference usersRef = db.getReference("users");
     private DatabaseReference instrumentsRef = db.getReference("instruments");
+    private DatabaseReference chatsRef = db.getReference("chats");
 
 
     //METHODS
@@ -251,6 +252,13 @@ public class FirebaseManager {
             });
         callback.onResult(mAuth.getCurrentUser().getDisplayName());
 }
+
+    /**
+     * Método que obtiene el id del usuario con la sesión iniciada
+     */
+    public String getUserId(){
+        return mAuth.getUid();
+    }
 
     /**
      * Obtiene la URL de la foto de perfil, dependiendo de la cuenta de Google y si
@@ -641,6 +649,36 @@ public class FirebaseManager {
         });
     }
 
+    /**
+     * Método que guarda los datos necesarios del chat entre un usuario que envia un mensaje y otro que lo recibe
+     * @param senderUser Id del usuario que envia el mensaje
+     * @param receiverUser Id del usuario que recibe el mensaje
+     */
+    public void sendChatMessage(final String senderUser, final String receiverUser, final String message) {
+        usersRef.child(senderUser).child("chats").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String chatId = "";
+                //
+                if(dataSnapshot.child(receiverUser).getValue(String.class)!=null){
+                    //obtener el id de grupo
+                    chatId = dataSnapshot.child(receiverUser).getValue(String.class);
+                    //escribir el mensaje
+                    chatsRef.child(chatId).child(System.currentTimeMillis()+","+senderUser).setValue(message);
+                }else{
+                    //Crear el id de grupo
+                    chatId = chatsRef.push().getKey();
+                    //escriber el id de grupo en los dos usuarios
+                    usersRef.child(senderUser).child("chats").child(receiverUser).setValue(chatId);
+                    usersRef.child(receiverUser).child("chats").child(senderUser).setValue(chatId);
+                    //escribir el mensaje
+                    chatsRef.child(chatId).child(System.currentTimeMillis()+","+senderUser).setValue(message);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+    }
 
     //region *INTERFACES*
     public interface OnFirebaseEventListener{

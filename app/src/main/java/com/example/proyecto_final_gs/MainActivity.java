@@ -130,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch(menuItem.getItemId()){
+                    case R.id.nav_chats:
+                        Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_profile_information:
                         menuItem.setChecked(false);
                         b.putString("fragment", "personalsetup");
