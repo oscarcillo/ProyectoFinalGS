@@ -15,6 +15,7 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ import com.example.proyecto_final_gs.adapters.ChatListAdapter;
 import com.example.proyecto_final_gs.adapters.InstrumentsListAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
+import com.musyzian.firebase.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,10 +63,25 @@ public class ChatListActivity extends AppCompatActivity {
         //inflar la lista de chats
         manager.loadChatList(new FirebaseManager.OnFirebaseLoadChatList() {
             @Override
-            public void onResult(List<String> urls, List<String> username, List<String> lastMessage) {
+            public void onResult(List<String> urls, List<String> username, List<String> lastMessage, final List<String> uids) {
                 ListView listViewChats = findViewById(R.id.listViewChats);
                 adapter = new ChatListAdapter(ChatListActivity.this, urls, username, lastMessage);
                 listViewChats.setAdapter(adapter);
+
+                //listener al hacer click en un item
+                listViewChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        manager.loadUserByUId(uids.get(position), new FirebaseManager.OnFirebaseLoadUser() {
+                            @Override
+                            public void onResult(User user) {
+                                Bundle b = new Bundle();
+                                b.putParcelable("user", user);
+                                Utils.goToActivity(ChatListActivity.this, ChatActivity.class, b, false);
+                            }
+                        });
+                    }
+                });
             }
         });
 

@@ -497,6 +497,52 @@ public class FirebaseManager {
     }
 
     /**
+     * Método que devuelve un objeto usuario a partir de su Id
+     * @param callback
+     */
+    public void loadUserByUId(final String id, final OnFirebaseLoadUser callback){
+        usersRef.child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String url = dataSnapshot.child("photoUrl").getValue(String.class);
+                String name = dataSnapshot.child("name").getValue(String.class);
+
+                //calcular edad
+                String age = dataSnapshot.child("birthday").getValue(String.class);
+                age = age.substring(age.length() - 4);
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                year = year - Integer.parseInt(age);
+                age = year+"";
+                //
+
+                String city = dataSnapshot.child("cityName").getValue(String.class);
+
+                //cargar lista de instrumentos
+                List<String> instruments = new ArrayList<>();
+                List<String> artists = new ArrayList<>();
+                for(int i = 0; i < dataSnapshot.child("instruments").getChildrenCount(); i++){
+                    instruments.add(dataSnapshot.child("instruments").child(i+"").getValue(String.class));
+                }
+                //cargar lista de artistas
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.child("artists").getChildren()){
+                    artists.add(dataSnapshot1.getValue(String.class));
+                }
+
+                //cargar localizacion
+                Location location = new Location("");
+                location.setLatitude(Double.parseDouble(dataSnapshot.child("location").child("latitude").getValue(String.class)));
+                location.setLongitude(Double.parseDouble(dataSnapshot.child("location").child("longitude").getValue(String.class)));
+
+                User user = new User(Uri.parse(url), name, age, city, instruments, artists, location, null, id);
+
+                callback.onResult(user);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+    }
+
+    /**
      * Método que carga los instrumentos ya seleccionados del usuario actual
      * @param callback Listener que se activa cuando los datos son cargados
      */
@@ -689,6 +735,7 @@ public class FirebaseManager {
         final List<String> urls = new ArrayList<>();
         final List<String> username = new ArrayList<>();
         final List<String> lastMessage = new ArrayList<>();
+        final List<String> uids = new ArrayList<>();
 
         usersRef.child(mAuth.getUid()).child("chats").addValueEventListener(new ValueEventListener() {
             @Override
@@ -696,6 +743,7 @@ public class FirebaseManager {
 
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                     String uid = snapshot.getKey();
+                    uids.add(uid);
                     final String chatId = snapshot.getValue(String.class);
 
                     //comprobar el nombre de usuario a partir del id de usuario
@@ -714,7 +762,7 @@ public class FirebaseManager {
                                         last = snapshot1.getValue(String.class);
                                     }
                                     lastMessage.add(last);
-                                    callback.onResult(urls, username, lastMessage);
+                                    callback.onResult(urls, username, lastMessage, uids);
                                 }
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) { }
@@ -763,8 +811,12 @@ public class FirebaseManager {
         void onResult(List<User> users);
     }
 
+    public interface OnFirebaseLoadUser {
+        void onResult(User user);
+    }
+
     public interface OnFirebaseLoadChatList {
-        void onResult(List<String> urls, List<String> username, List<String> lastMessage);
+        void onResult(List<String> urls, List<String> username, List<String> lastMessage, List<String> uid);
     }
     //endregion
 
