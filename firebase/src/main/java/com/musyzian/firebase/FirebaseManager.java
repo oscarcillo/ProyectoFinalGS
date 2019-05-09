@@ -504,8 +504,8 @@ public class FirebaseManager {
         usersRef.child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String url = dataSnapshot.child("photoUrl").getValue(String.class);
-                String name = dataSnapshot.child("name").getValue(String.class);
+                final String url = dataSnapshot.child("photoUrl").getValue(String.class);
+                final String name = dataSnapshot.child("name").getValue(String.class);
 
                 //calcular edad
                 String age = dataSnapshot.child("birthday").getValue(String.class);
@@ -513,13 +513,14 @@ public class FirebaseManager {
                 int year = Calendar.getInstance().get(Calendar.YEAR);
                 year = year - Integer.parseInt(age);
                 age = year+"";
+                final String anios = age;
                 //
 
-                String city = dataSnapshot.child("cityName").getValue(String.class);
+                final String city = dataSnapshot.child("cityName").getValue(String.class);
 
                 //cargar lista de instrumentos
-                List<String> instruments = new ArrayList<>();
-                List<String> artists = new ArrayList<>();
+                final List<String> instruments = new ArrayList<>();
+                final List<String> artists = new ArrayList<>();
                 for(int i = 0; i < dataSnapshot.child("instruments").getChildrenCount(); i++){
                     instruments.add(dataSnapshot.child("instruments").child(i+"").getValue(String.class));
                 }
@@ -529,13 +530,21 @@ public class FirebaseManager {
                 }
 
                 //cargar localizacion
-                Location location = new Location("");
+                final Location location = new Location("");
                 location.setLatitude(Double.parseDouble(dataSnapshot.child("location").child("latitude").getValue(String.class)));
                 location.setLongitude(Double.parseDouble(dataSnapshot.child("location").child("longitude").getValue(String.class)));
 
-                User user = new User(Uri.parse(url), name, age, city, instruments, artists, location, null, id);
+                getLocation(new OnFirebaseLoadLocation() {
+                    @Override
+                    public void onResult(Location loc) {
+                        //calcular distancia entre usuarios
+                        Float distance = loc.distanceTo(location);
 
-                callback.onResult(user);
+                        User user = new User(Uri.parse(url), name, anios, city, instruments, artists, location, distance, id);
+
+                        callback.onResult(user);
+                    }
+                });
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
@@ -778,6 +787,48 @@ public class FirebaseManager {
         });
     }
 
+    /**
+     * Método que carga toda los mensajes de una conversación entre dos usuarios
+     */
+    public void loadChatMessages(String idUser1, String idUser2, final OnFirebaseLoadChatMessages callback){
+
+        final List<String> messages = new ArrayList<>();
+        final List<Boolean> owner = new ArrayList<>();
+
+        usersRef.child(idUser1).child("chats").child(idUser2).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String chatId = dataSnapshot.getValue(String.class);
+                //cargar los mensajes de la conversacion
+                chatsRef.child(chatId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        messages.clear();
+                        owner.clear();
+                        //
+                        for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            messages.add(snapshot.getValue(String.class));
+
+                            //comprobar de quien es el mensaje
+                            String cadena = snapshot.getKey();
+                            String[] parts = cadena.split(",");
+                            if(parts[1].equals(mAuth.getUid()))
+                                owner.add(true);
+                            else
+                                owner.add(false);
+
+                            callback.onResult(messages, owner);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                });
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
     //region *INTERFACES*
     public interface OnFirebaseEventListener{
         void onResult(Boolean success);
@@ -817,6 +868,10 @@ public class FirebaseManager {
 
     public interface OnFirebaseLoadChatList {
         void onResult(List<String> urls, List<String> username, List<String> lastMessage, List<String> uid);
+    }
+
+    public interface OnFirebaseLoadChatMessages {
+        void onResult(List<String> messages, List<Boolean> owner);
     }
     //endregion
 

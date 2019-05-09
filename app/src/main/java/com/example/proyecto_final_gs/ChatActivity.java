@@ -30,6 +30,8 @@ import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
 import com.musyzian.firebase.User;
 
+import java.util.List;
+
 public class ChatActivity extends AppCompatActivity {
 
     FirebaseManager manager = FirebaseManager.get();
@@ -50,7 +52,11 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        //cargar los datos de usuario para mostrar en el chat
         loadUserData();
+
+        //cargar los mensajes de la conversacion
+        loadMessages();
 
         //listener para el boton de enviar mensaje
         findViewById(R.id.chatSendButton).setOnClickListener(new View.OnClickListener() {
@@ -166,6 +172,34 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    //metodo que carga los mensajes de la conversacion
+    public void loadMessages(){
+        final User user = getIntent().getParcelableExtra("user");
+        final TextView messagesText = findViewById(R.id.messages);
+
+        manager.loadChatMessages(manager.getUserId(), user.getId(), new FirebaseManager.OnFirebaseLoadChatMessages() {
+            @Override
+            public void onResult(List<String> messages, List<Boolean> owner) {
+
+                String cadena = "";
+
+                for(int i = 0; i < messages.size(); i++){
+
+                    if(owner.get(i))
+                        cadena = cadena + "Tú: ";
+                    else
+                        cadena = cadena + user.getName() +": ";
+
+                    cadena = cadena + messages.get(i);
+                    cadena = cadena + "\n";
+                }
+
+                messagesText.setText(cadena);
+            }
+        });
+    }
+
+    //metodo para enviar mensaje
     public void sendMessage(){
         User user = getIntent().getParcelableExtra("user");
 

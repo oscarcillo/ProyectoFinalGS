@@ -53,22 +53,33 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.v7.widget.RecyclerView
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toTopOf="@+id/chat_footer"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/messages"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/chat_footer"
-                    android:layout_width="414dp"
+                    android:layout_width="0dp"
                     android:layout_height="54dp"
                     android:background="@color/colorPrimary"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
 
                     <EditText
                         android:id="@+id/chatWriteText"
@@ -85,7 +96,7 @@
 
                     <ImageButton
                         android:id="@+id/chatSendButton"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:layout_weight="1"
