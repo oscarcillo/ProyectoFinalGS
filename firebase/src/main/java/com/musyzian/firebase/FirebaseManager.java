@@ -794,17 +794,21 @@ public class FirebaseManager {
 
         final List<String> messages = new ArrayList<>();
         final List<Boolean> owner = new ArrayList<>();
+        final List<String> time = new ArrayList<>();
 
         usersRef.child(idUser1).child("chats").child(idUser2).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String chatId = dataSnapshot.getValue(String.class);
                 //cargar los mensajes de la conversacion
+                if(chatId==null)
+                    return;
                 chatsRef.child(chatId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         messages.clear();
                         owner.clear();
+                        time.clear();
                         //
                         for(DataSnapshot snapshot : dataSnapshot.getChildren()){
                             messages.add(snapshot.getValue(String.class));
@@ -817,8 +821,9 @@ public class FirebaseManager {
                             else
                                 owner.add(false);
 
-                            callback.onResult(messages, owner);
+                            time.add(parts[0]);
                         }
+                        callback.onResult(messages, owner, time);
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) { }
@@ -871,7 +876,7 @@ public class FirebaseManager {
     }
 
     public interface OnFirebaseLoadChatMessages {
-        void onResult(List<String> messages, List<Boolean> owner);
+        void onResult(List<String> messages, List<Boolean> owner, List<String> time);
     }
     //endregion
 

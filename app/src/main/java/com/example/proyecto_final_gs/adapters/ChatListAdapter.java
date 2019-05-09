@@ -12,8 +12,6 @@ import android.widget.TextView;
 import com.example.proyecto_final_gs.R;
 import com.example.proyecto_final_gs.Utils;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 public class ChatListAdapter extends ArrayAdapter<String> {
@@ -46,7 +44,7 @@ public class ChatListAdapter extends ArrayAdapter<String> {
         //
         Utils.loadImageWithGlideSize(context, Uri.parse(urls.get(position)), imagen, 500, 500);
         usernameText.setText(username.get(position));
-        lastMessageText.setText(lastMessage.get(position));
+        //lastMessageText.setText(lastMessage.get(position));
 
         return listViewItem;
     }

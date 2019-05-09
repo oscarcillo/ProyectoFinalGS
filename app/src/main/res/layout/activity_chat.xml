@@ -63,11 +63,10 @@
                     app:layout_constraintBottom_toTopOf="@+id/chat_footer"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <TextView
-                        android:id="@+id/messages"
+                    <ListView
+                        android:id="@+id/messagesListView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView" />
+                        android:layout_height="match_parent" />
                 </LinearLayout>
 
                 <LinearLayout

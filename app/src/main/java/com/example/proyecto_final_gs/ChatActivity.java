@@ -20,16 +20,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.proyecto_final_gs.adapters.ChatListAdapter;
+import com.example.proyecto_final_gs.adapters.ChatMessagesAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
 import com.musyzian.firebase.User;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
@@ -45,12 +50,17 @@ public class ChatActivity extends AppCompatActivity {
     //bundle
     Bundle b = new Bundle();
 
+    ChatMessagesAdapter adapter;
+    ListView chatMessagesListView;
+
     boolean isGoogleAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        chatMessagesListView = findViewById(R.id.messagesListView);
 
         //cargar los datos de usuario para mostrar en el chat
         loadUserData();
@@ -168,33 +178,20 @@ public class ChatActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-
     }
 
     //metodo que carga los mensajes de la conversacion
     public void loadMessages(){
         final User user = getIntent().getParcelableExtra("user");
-        final TextView messagesText = findViewById(R.id.messages);
 
         manager.loadChatMessages(manager.getUserId(), user.getId(), new FirebaseManager.OnFirebaseLoadChatMessages() {
             @Override
-            public void onResult(List<String> messages, List<Boolean> owner) {
-
-                String cadena = "";
-
-                for(int i = 0; i < messages.size(); i++){
-
-                    if(owner.get(i))
-                        cadena = cadena + "Tú: ";
-                    else
-                        cadena = cadena + user.getName() +": ";
-
-                    cadena = cadena + messages.get(i);
-                    cadena = cadena + "\n";
-                }
-
-                messagesText.setText(cadena);
+            public void onResult(List<String> messages, List<Boolean> owner, List<String> time) {
+                //inflar la lista de mensajes
+                adapter = new ChatMessagesAdapter(ChatActivity.this, messages, owner, time);
+                chatMessagesListView.setAdapter(adapter);
+                chatMessagesListView.setSelection(adapter.getCount()-1);
+                chatMessagesListView.setDivider(null);
             }
         });
     }
