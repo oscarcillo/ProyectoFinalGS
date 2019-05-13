@@ -156,12 +156,17 @@ public class ChatListActivity extends AppCompatActivity {
                         Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
                                 null, false);
                         break;
+                    case R.id.nav_upload_audios:
+                        Utils.goToActivity(getApplicationContext(), UploadAudiosActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_profile_information:
                         menuItem.setChecked(false);
                         b.putString("fragment", "personalsetup");
                         Utils.goToActivity(getApplicationContext(), SetUpActivity.class,
                                 b, false);
                         break;
+
                     case R.id.nav_instrument_selection:
                         b.putString("fragment", "musicalsetup");
                         Utils.goToActivity(getApplicationContext(), SetUpActivity.class,

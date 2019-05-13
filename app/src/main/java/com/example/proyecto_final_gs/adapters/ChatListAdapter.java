@@ -44,7 +44,10 @@ public class ChatListAdapter extends ArrayAdapter<String> {
         //
         Utils.loadImageWithGlideSize(context, Uri.parse(urls.get(position)), imagen, 500, 500);
         usernameText.setText(username.get(position));
-        //lastMessageText.setText(lastMessage.get(position));
+        try{
+            lastMessageText.setText(lastMessage.get(position));
+        }catch(Exception e){}
+
 
         return listViewItem;
     }

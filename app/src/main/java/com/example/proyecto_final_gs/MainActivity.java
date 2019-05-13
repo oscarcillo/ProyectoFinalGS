@@ -1,6 +1,9 @@
 package com.example.proyecto_final_gs;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,14 +17,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
     //views
     Toolbar toolbar;
+
+    final double rate = 1.1;
 
     //user list
     RecyclerView recyclerView;
@@ -91,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case R.id.filterButton:
+                        //dialogo del filtro
+                        showFilterDialog();
                         break;
                 }
                 return true;
@@ -134,6 +146,10 @@ public class MainActivity extends AppCompatActivity {
                         Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
                                 null, false);
                         break;
+                    case R.id.nav_upload_audios:
+                        Utils.goToActivity(getApplicationContext(), UploadAudiosActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_profile_information:
                         menuItem.setChecked(false);
                         b.putString("fragment", "personalsetup");
@@ -167,13 +183,102 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //construir la lista de usuarios
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        int distance = sharedPref.getInt("distance", 50);
+        buildUserList((int)Math.pow(rate, distance-1));
+    }
+
+    //metodo que muestra el dialogo de filtro
+    public void showFilterDialog(){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_filter, null);
+        dialogBuilder.setView(dialogView);
+
+        //
+        final SeekBar seekDistance = dialogView.findViewById(R.id.seekBarDistance);
+        final TextView textDistance = dialogView.findViewById(R.id.textDIstance);
+
+
+
+        //cargar la distancia del dialogo guardada en shared preferences
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        int distance = sharedPref.getInt("distance", 50);
+
+        //despues de cargar la ditancia, tambien cambiar el textview
+        seekDistance.setProgress(distance);
+        Double pg = Math.pow(rate, seekDistance.getProgress()-1);
+        textDistance.setText(String.format("%.0f", pg)+" km");
+
+        seekDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Double pg = Math.pow(rate, seekDistance.getProgress()-1);
+                textDistance.setText(String.format("%.0f", pg)+" km");
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
+
+        dialogBuilder.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                buildUserList((int)Math.pow(rate, seekDistance.getProgress()-1));
+
+                //guardar la distancia
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putInt("distance", seekDistance.getProgress());
+                editor.commit();
+            }
+        });
+
+        //
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.setTitle(R.string.filter);
+
+        alertDialog.show();
+
+        /*buttonUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nombre = editTextName.getText().toString().trim();
+                if(!TextUtils.isEmpty(editTextName.toString())){
+                    updateArtist(artistId, nombre, spinner.getSelectedItem().toString());
+                    alertDialog.dismiss();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),
+                            "El nombre del artista no puede estar vacio",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteArtist(artistId);
+                Toast.makeText(getApplicationContext(),
+                        "El artista y sus canciones han sido eliminadas",
+                        Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+        });*/
+    }
+
+    //metodo que construye la lista de usuarios
+    public void buildUserList(int distance){
+        //construir la lista de usuarios
         userList = new ArrayList<>();
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        manager.loadUsersList(new FirebaseManager.OnFirebaseLoadUsers() {
+        manager.loadUsersList(distance, new FirebaseManager.OnFirebaseLoadUsers() {
             @Override
             public void onResult(List<User> users) {
                 userList = users;

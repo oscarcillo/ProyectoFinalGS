@@ -1,7 +1,6 @@
 package com.example.proyecto_final_gs;
 
 import android.content.DialogInterface;
-import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,68 +12,44 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.proyecto_final_gs.adapters.ChatListAdapter;
-import com.example.proyecto_final_gs.adapters.ChatMessagesAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
-import com.musyzian.firebase.User;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ChatActivity extends AppCompatActivity {
+public class UploadAudiosActivity extends AppCompatActivity {
 
-    FirebaseManager manager = FirebaseManager.get();
+    FirebaseManager manager;
 
     //drawer layout
     DrawerLayout drawer;
 
-    //views
-    Toolbar toolbar;
-
     //bundle
     Bundle b = new Bundle();
 
-    ChatMessagesAdapter adapter;
-    ListView chatMessagesListView;
+    //views
+    Toolbar toolbar;
 
     boolean isGoogleAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_upload_audios);
 
-        chatMessagesListView = findViewById(R.id.messagesListView);
-
-        //cargar los datos de usuario para mostrar en el chat
-        loadUserData();
-
-        //cargar los mensajes de la conversacion
-        loadMessages();
-
-        //listener para el boton de enviar mensaje
-        findViewById(R.id.chatSendButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendMessage();
-            }
-        });
+        //iniciar firebase
+        manager = FirebaseManager.get();
 
         //inicializar drawer y toolbar
         drawer = findViewById(R.id.drawerLayout);
@@ -87,7 +62,7 @@ public class ChatActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 switch(menuItem.getItemId()){
                     case R.id.logoutButton:
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(UploadAudiosActivity.this);
 
                         builder.setMessage(getText(R.string.dialog_signout_confirmation));
 
@@ -95,15 +70,12 @@ public class ChatActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 manager.signOut();
-                                Utils.goToActivity(ChatActivity.this, LoginActivity.class,
+                                Utils.goToActivity(UploadAudiosActivity.this, LoginActivity.class,
                                         null, true);
                             }
                         });
                         builder.setNegativeButton(getText(R.string.dialog_cancel), null);
                         builder.show();
-                        break;
-
-                    case R.id.filterButton:
                         break;
                 }
                 return true;
@@ -184,58 +156,6 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    //metodo que carga los mensajes de la conversacion
-    public void loadMessages(){
-        final User user = getIntent().getParcelableExtra("user");
-
-        manager.loadChatMessages(manager.getUserId(), user.getId(), new FirebaseManager.OnFirebaseLoadChatMessages() {
-            @Override
-            public void onResult(List<String> messages, List<Boolean> owner, List<String> time) {
-                //inflar la lista de mensajes
-                adapter = new ChatMessagesAdapter(ChatActivity.this, messages, owner, time);
-                chatMessagesListView.setAdapter(adapter);
-                chatMessagesListView.setSelection(adapter.getCount()-1);
-                chatMessagesListView.setDivider(null);
-            }
-        });
-    }
-
-    //metodo para enviar mensaje
-    public void sendMessage(){
-        User user = getIntent().getParcelableExtra("user");
-
-        EditText chatWriteText = findViewById(R.id.chatWriteText);
-
-        manager.sendChatMessage(manager.getUserId(), user.getId(), chatWriteText.getText().toString());
-
-        chatWriteText.setText("");
-    }
-
-    //metodo que carga toda la informacion del usuario en esta actividad
-    public void loadUserData(){
-        User user = getIntent().getParcelableExtra("user");
-
-        ImageView image = findViewById(R.id.toolbarPhotoImage);
-        TextView text = findViewById(R.id.toolbarNameText);
-
-        Utils.loadImageWithGlideSize(this, user.getProfileImageUrl(), image, 100, 100);
-        text.setText(user.getName());
-
-        //listener para la imagen de perfil del chat
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onProfileImageClick();
-            }
-        });
-    }
-
-    //metodo que lleva al perfil del usuario del chat
-    public void onProfileImageClick(){
-        Bundle b = new Bundle();
-        b.putParcelable("user", getIntent().getParcelableExtra("user"));
-        Utils.goToActivity(ChatActivity.this, UserActivity.class, b, false);
-    }
 
     //metodo para borrar la cuenta de usuario
     public void showDeleteAccountDialog(){
@@ -262,10 +182,10 @@ public class ChatActivity extends AppCompatActivity {
                     public void onResult(Boolean success) {
                         manager.signOut();
                         if(success) {
-                            Toast.makeText(ChatActivity.this,
+                            Toast.makeText(UploadAudiosActivity.this,
                                     getText(R.string.user_deleted),
                                     Toast.LENGTH_SHORT).show();
-                            Utils.goToActivity(ChatActivity.this, LoginActivity.class, null, true);
+                            Utils.goToActivity(UploadAudiosActivity.this, LoginActivity.class, null, true);
                         } else
                             Toast.makeText(getApplicationContext(),
                                     getText(R.string.user_not_deleted),
@@ -312,10 +232,10 @@ public class ChatActivity extends AppCompatActivity {
                             @Override
                             public void onResult(Boolean success) {
                                 if(success)
-                                    Toast.makeText(ChatActivity.this,
+                                    Toast.makeText(UploadAudiosActivity.this,
                                             getText(R.string.password_changed), Toast.LENGTH_SHORT).show();
                                 else
-                                    Toast.makeText(ChatActivity.this,
+                                    Toast.makeText(UploadAudiosActivity.this,
                                             getText(R.string.password_not_changed), Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -373,5 +293,4 @@ public class ChatActivity extends AppCompatActivity {
         else
             super.onBackPressed();
     }
-
 }

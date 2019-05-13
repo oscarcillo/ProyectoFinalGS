@@ -86,6 +86,7 @@
 
     <!-- settings !-->
     <string name="chats">Chats</string>
+    <string name="upload_audios">Upload audios</string>
     <string name="profile_information">Profile Information</string>
     <string name="instruments_selection">Instrument Selection</string>
     <string name="artist_selection">Artist Selection</string>
@@ -117,6 +118,8 @@
     <string name="years_old">years old</string>
 
     <string name="chat">Chat</string>
+
+    <string name="distance">Distance</string>
 
 
 </resources>

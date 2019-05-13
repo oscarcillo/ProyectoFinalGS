@@ -595,7 +595,7 @@ public class FirebaseManager {
      * Método que carga la lista con todos los usuarios de la aplicación
      * @param callback
      */
-    public void loadUsersList(final OnFirebaseLoadUsers callback){
+    public void loadUsersList(final int distanceFilter, final OnFirebaseLoadUsers callback){
         final List<User> users = new ArrayList<>();
 
         user = mAuth.getCurrentUser();
@@ -616,41 +616,44 @@ public class FirebaseManager {
                             //comprobar que la configuracion de usuario esta completada
                             if(snapshot.child("conf").child("locationdescriptionactivity").getValue(String.class)!=null
                                     && !snapshot.getKey().equals(user.getUid())) {
-                                //crear listas
-                                List<String> instruments = new ArrayList<>();
-                                List<String> artists = new ArrayList<>();
-
-                                //cargar datos a la lista de usuarios
-                                String photoUrl = snapshot.child("photoUrl").getValue(String.class);
-                                String name = snapshot.child("name").getValue(String.class);
-                                //calcular edad
-                                String age = snapshot.child("birthday").getValue(String.class);
-                                age = age.substring(age.length() - 4);
-                                int year = Calendar.getInstance().get(Calendar.YEAR);
-                                year = year - Integer.parseInt(age);
-                                age = year+"";
-                                //
-                                String city = snapshot.child("cityName").getValue(String.class);
-
-                                //cargar lista de instrumentos
-                                for(int i = 0; i < snapshot.child("instruments").getChildrenCount(); i++){
-                                    instruments.add(snapshot.child("instruments").child(i+"").getValue(String.class));
-                                }
-                                //cargar lista de artistas
-                                for(DataSnapshot dataSnapshot1 : snapshot.child("artists").getChildren()){
-                                    artists.add(dataSnapshot1.getValue(String.class));
-                                }
 
                                 //cargar localizacion
                                 Location location = new Location("");
                                 location.setLatitude(Double.parseDouble(snapshot.child("location").child("latitude").getValue(String.class)));
                                 location.setLongitude(Double.parseDouble(snapshot.child("location").child("longitude").getValue(String.class)));
-
                                 //calcular distancia entre usuarios
                                 Float distance = locCurrentUser.distanceTo(location);
 
-                                //crear la lista de usuarios
-                                users.add(new User(Uri.parse(photoUrl), name, age, city, instruments, artists, location, distance, snapshot.getKey()));
+                                //comprobar si el usuario esta dentro de la distancia del filtro
+                                if(distance/1000<distanceFilter){
+                                    //crear listas
+                                    List<String> instruments = new ArrayList<>();
+                                    List<String> artists = new ArrayList<>();
+
+                                    //cargar datos a la lista de usuarios
+                                    String photoUrl = snapshot.child("photoUrl").getValue(String.class);
+                                    String name = snapshot.child("name").getValue(String.class);
+                                    //calcular edad
+                                    String age = snapshot.child("birthday").getValue(String.class);
+                                    age = age.substring(age.length() - 4);
+                                    int year = Calendar.getInstance().get(Calendar.YEAR);
+                                    year = year - Integer.parseInt(age);
+                                    age = year+"";
+                                    //
+                                    String city = snapshot.child("cityName").getValue(String.class);
+
+                                    //cargar lista de instrumentos
+                                    for(int i = 0; i < snapshot.child("instruments").getChildrenCount(); i++){
+                                        instruments.add(snapshot.child("instruments").child(i+"").getValue(String.class));
+                                    }
+                                    //cargar lista de artistas
+                                    for(DataSnapshot dataSnapshot1 : snapshot.child("artists").getChildren()){
+                                        artists.add(dataSnapshot1.getValue(String.class));
+                                    }
+
+                                    //crear la lista de usuarios
+                                    users.add(new User(Uri.parse(photoUrl), name, age, city, instruments, artists, location, distance, snapshot.getKey()));
+                                }
                             }
                         }
                         //devolver la lista de usuarios con el listener
