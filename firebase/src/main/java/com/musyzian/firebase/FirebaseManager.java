@@ -317,6 +317,23 @@ public class FirebaseManager {
     }
 
     /**
+     * Metodo que carga de la base de datos la descripcion a partir de un usuario
+     * @param id
+     * @param callback
+     */
+    public void getDescriptionByUserId(String id, final OnFirebaseLoadString callback){
+        usersRef.child(id).child("description").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null)
+                    callback.onResult(dataSnapshot.getValue().toString());
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+    }
+
+    /**
      * Método que carga el nombre de la ciudad de la base de datos
      * @param callback Listener que se activa al cargar los datos
      */
@@ -708,6 +725,82 @@ public class FirebaseManager {
     }
 
     /**
+     * Método que subre al almacenamiento de Firebase un archivo de audio
+     * @param name Nombre del archivo de audio
+     * @param audio Enlace URI con el archivo de audio
+     * @param callback Listener que se activa al subir el audio
+     */
+    public void uploadAudioFirebaseStorage(String name, Uri audio, final OnFirebaseEventListener callback){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        String url = "audios/"+mAuth.getCurrentUser().getUid()+"/"+name+","+System.currentTimeMillis();
+        final StorageReference audioRef = storageRef.child(url);
+        UploadTask uploadTask = audioRef.putFile(audio);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("1", exception.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i("1", "El audio se ha subido a Firebase");
+            }
+        });
+        //
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return audioRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                callback.onResult(task.isSuccessful());
+
+                //subir numero de canciones a la base de datos del usuario
+                final DatabaseReference ref = usersRef.child(getUserId()).child("audios");
+                ref.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.getValue(int.class)==null)
+                            ref.setValue(1);
+                        else
+                            ref.setValue(dataSnapshot.getValue(int.class)+1);
+                        ref.removeEventListener(this);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                });
+            }
+        });
+    }
+
+    /**
+     * Metodo que comprueba cuantos audios ha subido el usuario actual
+     * @param callback Listener que se activa al cargar el dato
+     */
+    public void verifyAudioNumber(final OnFirebaseLoadInt callback){
+        usersRef.child(getUserId()).child("audios").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int number;
+                if(dataSnapshot.getValue(int.class)==null)
+                    number = 0;
+                else
+                    number = dataSnapshot.getValue(int.class);
+                callback.onResult(number);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+    }
+
+    /**
      * Método que guarda los datos necesarios del chat entre un usuario que envia un mensaje y otro que lo recibe
      * @param senderUser Id del usuario que envia el mensaje
      * @param receiverUser Id del usuario que recibe el mensaje
@@ -880,6 +973,10 @@ public class FirebaseManager {
 
     public interface OnFirebaseLoadChatMessages {
         void onResult(List<String> messages, List<Boolean> owner, List<String> time);
+    }
+
+    public interface OnFirebaseLoadInt {
+        void onResult(int number);
     }
     //endregion
 

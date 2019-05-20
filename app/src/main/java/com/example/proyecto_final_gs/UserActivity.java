@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -160,15 +161,16 @@ public class UserActivity extends AppCompatActivity {
     }
 
     public void loadUserData(){
-        User user = getIntent().getParcelableExtra("user");
+        final User user = getIntent().getParcelableExtra("user");
 
-        ImageView profileImageList = findViewById(R.id.profileImageList);
-        TextView textUsername = findViewById(R.id.textUsername);
-        TextView textAge = findViewById(R.id.textAge);
-        TextView textCity = findViewById(R.id.textCity);
-        TextView textDistance = findViewById(R.id.textDistance);
-        TextView textInstruments = findViewById(R.id.textInstruments);
-        TextView textArtists = findViewById(R.id.textArtists);
+        final ImageView profileImageList = findViewById(R.id.profileImageList);
+        final TextView textUsername = findViewById(R.id.textUsername);
+        final TextView textAge = findViewById(R.id.textAge);
+        final TextView textCity = findViewById(R.id.textCity);
+        final TextView textDistance = findViewById(R.id.textDistance);
+        final TextView textInstruments = findViewById(R.id.textInstruments);
+        final TextView textArtists = findViewById(R.id.textArtists);
+        final TextView userDescriptionText = findViewById(R.id.userDescriptionText);
 
         //
         Glide.with(this)
@@ -182,16 +184,25 @@ public class UserActivity extends AppCompatActivity {
         else
             textDistance.setText(String.format("%.0f",user.getDistance()/1000) + " km" );
 
-        //cargar las listas de instrumentos y artistas
-        String instruments = "";
-        for(int i = 0; i < user.getInstruments().size(); i++)
-                instruments = instruments + "- " + user.getInstruments().get(i) + "\r\n";
-        textInstruments.setText(instruments);
+        //cargar la descripcion del usuario
+        manager.getDescriptionByUserId(user.getId(), new FirebaseManager.OnFirebaseLoadString() {
+            @Override
+            public void onResult(String string) {
+                //cargar la descripcion en el textview
+                userDescriptionText.setText(string);
 
-        String artists = "";
-        for(int i = 0; i < user.getArtists().size(); i++)
-            artists = artists + "- " + user.getArtists().get(i) + "\r\n";
-        textArtists.setText(artists);
+                //cargar las listas de instrumentos y artistas
+                String instruments = "";
+                for(int i = 0; i < user.getInstruments().size(); i++)
+                    instruments = instruments + "- " + user.getInstruments().get(i) + "\r\n";
+                textInstruments.setText(instruments);
+
+                String artists = "";
+                for(int i = 0; i < user.getArtists().size(); i++)
+                    artists = artists + "- " + user.getArtists().get(i) + "\r\n";
+                textArtists.setText(artists);
+            }
+        });
 
         Log.e("userid", ""+user.getId());
     }

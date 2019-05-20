@@ -1,6 +1,7 @@
 package com.example.proyecto_final_gs;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -154,6 +156,20 @@ public class UploadAudiosActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        //listener del boton para subir audios
+        Button uploadAudioButton = findViewById(R.id.uploadAudioButton);
+        uploadAudioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_upload = new Intent();
+                intent_upload.setType("audio/*");
+                intent_upload.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent_upload,1);
+            }
+        });
+
+        loadAudioList();
     }
 
 
@@ -292,5 +308,37 @@ public class UploadAudiosActivity extends AppCompatActivity {
             drawer.closeDrawer(GravityCompat.START);
         else
             super.onBackPressed();
+    }
+
+    //metodo que se ejecuta al elegir un archivo de audio
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode,Intent data){
+        if(requestCode == 1){
+            if(resultCode == RESULT_OK){
+                Uri uri = data.getData();
+                final ProgressBar progreso = findViewById(R.id.progressBarAudios);
+                progreso.setVisibility(View.VISIBLE);
+                manager.uploadAudioFirebaseStorage("", uri, new FirebaseManager.OnFirebaseEventListener() {
+                    @Override
+                    public void onResult(Boolean success) {
+                        progreso.setVisibility(View.GONE);
+                        loadAudioList();
+                    }
+                });
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void loadAudioList(){
+        manager.verifyAudioNumber(new FirebaseManager.OnFirebaseLoadInt() {
+            @Override
+            public void onResult(int number) {
+                if(number==0){
+                    TextView noAudiosText = findViewById(R.id.noAudiosText);
+                    noAudiosText.setText(getText(R.string.no_audios_uploaded));
+                }
+            }
+        });
     }
 }

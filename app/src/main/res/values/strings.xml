@@ -121,5 +121,9 @@
 
     <string name="distance">Distance</string>
 
+    <!-- upload audios activity -->
+    <string name="upload_audio">Upload Audio</string>
+    <string name="no_audios_uploaded">No audios uploaded yet</string>
+
 
 </resources>
