@@ -152,6 +152,10 @@ public class ChatListActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch(menuItem.getItemId()){
+                    case R.id.nav_main_menu:
+                        Utils.goToActivity(getApplicationContext(), MainActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_chats:
                         Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
                                 null, false);

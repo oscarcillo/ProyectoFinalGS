@@ -83,6 +83,7 @@
     <string name="fill_description_location">Tienes que completar toda la informacion</string>
 
     <!-- settings !-->
+    <string name="main_menu">Menu Principal</string>
     <string name="chats">Chats</string>
     <string name="upload_audios">Subir audios</string>
     <string name="profile_information">Información de Perfil</string>

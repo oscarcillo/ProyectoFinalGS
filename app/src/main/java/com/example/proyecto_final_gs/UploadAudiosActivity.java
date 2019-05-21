@@ -11,6 +11,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.view.Menu;
@@ -26,8 +28,14 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.proyecto_final_gs.adapters.AudioListAdapter;
+import com.example.proyecto_final_gs.adapters.UserListAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
+import com.musyzian.firebase.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class UploadAudiosActivity extends AppCompatActivity {
@@ -117,6 +125,10 @@ public class UploadAudiosActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch(menuItem.getItemId()){
+                    case R.id.nav_main_menu:
+                        Utils.goToActivity(getApplicationContext(), MainActivity.class,
+                                null, false);
+                        break;
                     case R.id.nav_chats:
                         Utils.goToActivity(getApplicationContext(), ChatListActivity.class,
                                 null, false);
@@ -157,8 +169,21 @@ public class UploadAudiosActivity extends AppCompatActivity {
             }
         });
 
+        //import views
+        final Button uploadAudioButton = findViewById(R.id.uploadAudioButton);
+
+        //comprobar si el boton de subir audios tiene que estar habilitado
+        manager.verifyAudioNumber(manager.getUserId(), new FirebaseManager.OnFirebaseLoadInt() {
+            @Override
+            public void onResult(int number) {
+                if(number>=3)
+                    uploadAudioButton.setEnabled(false);
+                else
+                    uploadAudioButton.setEnabled(true);
+            }
+        });
+
         //listener del boton para subir audios
-        Button uploadAudioButton = findViewById(R.id.uploadAudioButton);
         uploadAudioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,13 +356,27 @@ public class UploadAudiosActivity extends AppCompatActivity {
     }
 
     public void loadAudioList(){
-        manager.verifyAudioNumber(new FirebaseManager.OnFirebaseLoadInt() {
+        manager.verifyAudioNumber(manager.getUserId(), new FirebaseManager.OnFirebaseLoadInt() {
             @Override
             public void onResult(int number) {
+                TextView noAudiosText = findViewById(R.id.noAudiosText);
                 if(number==0){
-                    TextView noAudiosText = findViewById(R.id.noAudiosText);
                     noAudiosText.setText(getText(R.string.no_audios_uploaded));
-                }
+                }else
+                    noAudiosText.setText("");
+            }
+        });
+
+        //build the audio list
+        manager.loadAudioList(manager.getUserId(), new FirebaseManager.OnFirebaseLoadInstruments() {
+            @Override
+            public void onResult(List<String> urls) {
+                RecyclerView recyclerView = findViewById(R.id.recyclerViewAudios);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+                AudioListAdapter adapter = new AudioListAdapter(getApplicationContext(), urls);
+                recyclerView.setAdapter(adapter);
             }
         });
     }

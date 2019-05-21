@@ -1,7 +1,6 @@
 package com.example.proyecto_final_gs.adapters;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,8 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.proyecto_final_gs.R;
-import com.example.proyecto_final_gs.UserActivity;
-import com.example.proyecto_final_gs.Utils;
 import com.musyzian.firebase.User;
 
 import java.util.List;

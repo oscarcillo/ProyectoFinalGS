@@ -4,6 +4,9 @@
     <group android:checkableBehavior="single"
         android:id="@+id/chats">
 
+        <item android:id="@+id/nav_main_menu"
+            android:title="@string/main_menu"/>
+
         <item android:id="@+id/nav_chats"
             android:title="@string/chats"/>
 

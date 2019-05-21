@@ -730,51 +730,57 @@ public class FirebaseManager {
      * @param audio Enlace URI con el archivo de audio
      * @param callback Listener que se activa al subir el audio
      */
-    public void uploadAudioFirebaseStorage(String name, Uri audio, final OnFirebaseEventListener callback){
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        String url = "audios/"+mAuth.getCurrentUser().getUid()+"/"+name+","+System.currentTimeMillis();
-        final StorageReference audioRef = storageRef.child(url);
-        UploadTask uploadTask = audioRef.putFile(audio);
+    public void uploadAudioFirebaseStorage(final String name, final Uri audio, final OnFirebaseEventListener callback){
+        final StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+        verifyAudioNumber(getUserId(), new OnFirebaseLoadInt() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("1", exception.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Log.i("1", "El audio se ha subido a Firebase");
-            }
-        });
-        //
-        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-                return audioRef.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                callback.onResult(task.isSuccessful());
+            public void onResult(int number) {
+                String url = "audios/"+mAuth.getCurrentUser().getUid()+"/"+(number+1);
+                final StorageReference audioRef = storageRef.child(url);
+                UploadTask uploadTask = audioRef.putFile(audio);
 
-                //subir numero de canciones a la base de datos del usuario
-                final DatabaseReference ref = usersRef.child(getUserId()).child("audios");
-                ref.addValueEventListener(new ValueEventListener() {
+                // Register observers to listen for when the download is done or if it fails
+                uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.getValue(int.class)==null)
-                            ref.setValue(1);
-                        else
-                            ref.setValue(dataSnapshot.getValue(int.class)+1);
-                        ref.removeEventListener(this);
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.e("1", exception.getMessage());
                     }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.i("1", "El audio se ha subido a Firebase");
+                    }
+                });
+                //
+                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+                        return audioRef.getDownloadUrl();
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        callback.onResult(task.isSuccessful());
+
+                        //subir numero de canciones a la base de datos del usuario
+                        final DatabaseReference ref = usersRef.child(getUserId()).child("audios");
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getValue(int.class)==null)
+                                    ref.setValue(1);
+                                else
+                                    ref.setValue(dataSnapshot.getValue(int.class)+1);
+                                ref.removeEventListener(this);
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) { }
+                        });
+                    }
                 });
             }
         });
@@ -784,8 +790,8 @@ public class FirebaseManager {
      * Metodo que comprueba cuantos audios ha subido el usuario actual
      * @param callback Listener que se activa al cargar el dato
      */
-    public void verifyAudioNumber(final OnFirebaseLoadInt callback){
-        usersRef.child(getUserId()).child("audios").addValueEventListener(new ValueEventListener() {
+    public void verifyAudioNumber(final String id, final OnFirebaseLoadInt callback){
+        usersRef.child(id).child("audios").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int number;
@@ -794,6 +800,7 @@ public class FirebaseManager {
                 else
                     number = dataSnapshot.getValue(int.class);
                 callback.onResult(number);
+                usersRef.child(id).child("audios").removeEventListener(this);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { }
@@ -880,6 +887,33 @@ public class FirebaseManager {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
+        });
+    }
+
+    public void loadAudioList(final String userid, final OnFirebaseLoadInstruments callback){
+        final StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+        verifyAudioNumber(userid, new OnFirebaseLoadInt() {
+            @Override
+            public void onResult(int number) {
+                String url = "audios/"+userid;
+                final StorageReference audioRef = storageRef.child(url);
+
+                if(number==0)
+                    return;
+
+                final List<String> urls = new ArrayList<>();
+
+                for(int i = 1; i <= number; i++){
+                    audioRef.child(""+i).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            urls.add(""+uri);
+                            callback.onResult(urls);
+                        }
+                    });
+                }
+            }
         });
     }
 
