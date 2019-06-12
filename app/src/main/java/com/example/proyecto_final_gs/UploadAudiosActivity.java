@@ -1,5 +1,6 @@
 package com.example.proyecto_final_gs;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,12 +31,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.proyecto_final_gs.adapters.AudioListAdapter;
-import com.example.proyecto_final_gs.adapters.UserListAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
-import com.musyzian.firebase.User;
-
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -375,7 +373,7 @@ public class UploadAudiosActivity extends AppCompatActivity {
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-                AudioListAdapter adapter = new AudioListAdapter(getApplicationContext(), urls);
+                AudioListAdapter adapter = new AudioListAdapter(getApplicationContext(), urls, true);
                 recyclerView.setAdapter(adapter);
             }
         });

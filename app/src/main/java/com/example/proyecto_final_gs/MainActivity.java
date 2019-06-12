@@ -240,33 +240,6 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setTitle(R.string.filter);
 
         alertDialog.show();
-
-        /*buttonUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String nombre = editTextName.getText().toString().trim();
-                if(!TextUtils.isEmpty(editTextName.toString())){
-                    updateArtist(artistId, nombre, spinner.getSelectedItem().toString());
-                    alertDialog.dismiss();
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),
-                            "El nombre del artista no puede estar vacio",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteArtist(artistId);
-                Toast.makeText(getApplicationContext(),
-                        "El artista y sus canciones han sido eliminadas",
-                        Toast.LENGTH_SHORT).show();
-                alertDialog.dismiss();
-            }
-        });*/
     }
 
     //metodo que construye la lista de usuarios

@@ -10,25 +10,32 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.proyecto_final_gs.adapters.AudioListAdapter;
 import com.example.proyecto_final_gs.setup.SetUpActivity;
 import com.musyzian.firebase.FirebaseManager;
 import com.musyzian.firebase.User;
+
+import java.util.List;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -51,6 +58,7 @@ public class UserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user);
 
         loadUserData();
+        loadAudioList();
 
         //inicializar drawer y toolbar
         drawer = findViewById(R.id.drawerLayout);
@@ -352,5 +360,59 @@ public class UserActivity extends AppCompatActivity {
         Bundle b = new Bundle();
         b.putParcelable("user", getIntent().getParcelableExtra("user"));
         Utils.goToActivity(this, ChatActivity.class, b, true);
+    }
+
+    public void loadAudioList(){
+        final User user = getIntent().getParcelableExtra("user");
+
+        final RecyclerView recyclerView = findViewById(R.id.recyclerViewAudiosUser);
+
+        manager.verifyAudioNumber(user.getId(), new FirebaseManager.OnFirebaseLoadInt() {
+            @Override
+            public void onResult(int number) {
+                TextView noAudiosText = findViewById(R.id.noAudiosText2);
+                if(number==0){
+                    noAudiosText.setText(getText(R.string.no_audios_uploaded));
+                }else
+                    noAudiosText.setVisibility(View.GONE);
+
+                ScrollView scrollView = findViewById(R.id.scrollView);
+                scrollView.scrollTo(0,0);
+
+                //cambiar tamaño de recyclerview segun numero de items
+                ViewGroup.LayoutParams params=recyclerView.getLayoutParams();
+
+                if(number==2)
+                    params.height=500;
+                if(number==1)
+                    params.height=250;
+                if(number==0)
+                    params.height=0;
+
+                recyclerView.setLayoutParams(params);
+            }
+        });
+
+        //build the audio list
+        manager.loadAudioList(user.getId(), new FirebaseManager.OnFirebaseLoadInstruments() {
+            @Override
+            public void onResult(List<String> urls) {
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+                AudioListAdapter adapter = new AudioListAdapter(getApplicationContext(), urls, false);
+                recyclerView.setAdapter(adapter);
+
+                //hacer scroll hasta el principio del recyclerview
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ScrollView scrollView = findViewById(R.id.scrollView);
+                        scrollView.scrollTo(0,0);
+                    }
+                });
+            }
+        });
+
     }
 }

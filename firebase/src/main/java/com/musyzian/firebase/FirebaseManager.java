@@ -17,7 +17,6 @@ import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,9 +29,22 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 public class FirebaseManager {
+
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase db;
+    private FirebaseUser user;
+
+    private DatabaseReference usersRef = db.getReference("users");
+    private DatabaseReference instrumentsRef = db.getReference("instruments");
+    private DatabaseReference chatsRef = db.getReference("chats");
+
+    private FirebaseManager(){
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseDatabase.getInstance();
+        user = mAuth.getCurrentUser();
+    }
 
     private static FirebaseManager INSTANCE;
 
@@ -41,19 +53,6 @@ public class FirebaseManager {
             INSTANCE = new FirebaseManager();
         return INSTANCE;
     }
-
-    private FirebaseManager(){
-        mAuth = FirebaseAuth.getInstance();
-    }
-
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseDatabase db = FirebaseDatabase.getInstance();
-    private FirebaseUser user = mAuth.getCurrentUser();
-
-    private DatabaseReference usersRef = db.getReference("users");
-    private DatabaseReference instrumentsRef = db.getReference("instruments");
-    private DatabaseReference chatsRef = db.getReference("chats");
-
 
     //METHODS
     /**
@@ -239,7 +238,8 @@ public class FirebaseManager {
      * @return Cadena con el nombre de usuario
      */
     public void getUserName(final OnFirebaseLoadString callback){
-            usersRef.child(mAuth.getCurrentUser().getUid()).child("name").addValueEventListener(new ValueEventListener() {
+            usersRef.child(mAuth.getCurrentUser().getUid()).child("name").addValueEventListener(
+                    new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.getValue()!=null){
@@ -557,7 +557,8 @@ public class FirebaseManager {
                         //calcular distancia entre usuarios
                         Float distance = loc.distanceTo(location);
 
-                        User user = new User(Uri.parse(url), name, anios, city, instruments, artists, location, distance, id);
+                        User user = new User(Uri.parse(url), name, anios, city, instruments,
+                                artists, location, distance, id);
 
                         callback.onResult(user);
                     }

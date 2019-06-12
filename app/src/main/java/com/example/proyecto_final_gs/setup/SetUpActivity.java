@@ -44,7 +44,7 @@ public class SetUpActivity extends AppCompatActivity implements OnFragmentIntera
 
         //inicializar drawer y toolbar
         Toolbar toolbar = findViewById(R.id.toolbarSetup);
-        toolbar.inflateMenu(R.menu.menu);
+        toolbar.inflateMenu(R.menu.menu_without_filter);
         toolbar.setTitle(R.string.app_name);
 
         //region listener que da funcionalidad al menu
