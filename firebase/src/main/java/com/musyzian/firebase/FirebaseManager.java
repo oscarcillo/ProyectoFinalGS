@@ -32,9 +32,9 @@ import java.util.List;
 
 public class FirebaseManager {
 
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase db;
-    private FirebaseUser user;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();;
+    private FirebaseDatabase db = FirebaseDatabase.getInstance();;
+    private FirebaseUser user = mAuth.getCurrentUser();;
 
     private DatabaseReference usersRef = db.getReference("users");
     private DatabaseReference instrumentsRef = db.getReference("instruments");

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- <color name="colorPrimary">#008577</color> -->
     <color name="buttonColor">#2E66AA</color>
-    <!-- <color name="colorPrimaryDark">#00574B</color> -->
     <color name="colorAccent">#D81B60</color>
 
     <color name="colorPrimary">#2E66AA</color>
@@ -11,3 +9,4 @@
     <color name="left_chat">#F3F3F3</color>
     <color name="right_chat">#D2FFC7</color>
 </resources>
+
